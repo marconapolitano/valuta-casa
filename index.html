@@ -168,6 +168,13 @@ function showResult(opinione,err,dati){
   var vd=buildVerdict(opinione,dati);
   v.className="verdict "+vd.tone;
   v.innerHTML='<div class="vbig '+vd.tone+'">'+escTxt(vd.big)+'</div><div><div class="vlabel">'+escTxt(vd.label)+'</div><div class="vsub">'+escTxt(vd.sub)+(dati&&dati.nFoto?' · '+dati.nFoto+' foto analizzate':'')+'</div></div>';
+  if(dati&&dati.prezzo&&dati.mq){
+    var emq=Math.round(dati.prezzo/dati.mq);
+    var dbg=document.createElement("div");
+    dbg.style.cssText="font-size:11px;opacity:.5;margin-top:6px";
+    dbg.textContent="dati usati: "+dati.prezzo+" € · "+dati.mq+" mq · "+emq+" €/mq · zona "+(dati.zona||"?");
+    v.appendChild(dbg);
+  }
   md.innerHTML=md2html(opinione);
   window.scrollTo({top:0,behavior:"smooth"});
 }
