@@ -50,7 +50,84 @@
 <script>
 // Il servizio è questa stessa origine (setup.html sta sul dominio Vercel).
 const SERVICE = location.origin + "/";
-const BM = `javascript:(function(){var SERVICE=${JSON.stringify(SERVICE)};var body=document.body.innerText,title=document.title;var pEl=document.querySelector('.info-data-price')||document.querySelector('[class*="price"]');var price=null;if(pEl){var m=pEl.textContent.match(/([\\d.]+)/);if(m)price=Number(m[1].replace(/\\./g,""));}var mqm=body.match(/(\\d{2,4})\\s*m²/);var mq=mqm?Number(mqm[1]):null;var t=title.replace(/\\s+—.*/,"").trim();var ai=(t.match(/in vendita in\\s+(.+)$/i)||t.match(/in\\s+(.+)$/i)||[])[1]||t;var parts=ai.split(",").map(function(s){return s.trim();});parts.pop();var zona=parts.pop()||"";var indir=parts.join(", ");var lc=body.toLowerCase();var ag=/tecnocasa|gabetti|remax|re\\/max|grimaldi|toscano|professionecasa/.test(lc)||(/agenzia/.test(lc)&&!/no agenzie|astenersi/.test(lc));var note=[];if(/no agenzie|astenersi.*agenzi|privato vende|vendesi privat/.test(lc))note.push("privato dichiarato");if(/seminterrat|interrat/.test(lc))note.push("seminterrato");if(/affittat/.test(lc))note.push("affittato");if(/\\bvilla\\b|villetta|casa indip|bifamiliare|a schiera/.test(lc))note.push("villa/casa indip");var d={url:location.href,price:price,mq:mq,indirizzo:indir,zona:zona,agenzia:ag,note:note.join("; ")};var enc=btoa(unescape(encodeURIComponent(JSON.stringify(d))));window.open(SERVICE+"?d="+encodeURIComponent(enc),"_blank");})();`;
+
+// Estrazione UNIVERSALE multi-portale, a cascata:
+// 1) JSON-LD schema.org (Idealista/Immobiliare/Casa.it spesso ce l'hanno)
+// 2) meta/OpenGraph  3) selettori noti per dominio  4) regex sul testo.
+// Definita come funzione leggibile, poi minificata nel bookmarklet.
+function extractorSource() {
+  return function () {
+    var SVC = "__SERVICE__";
+    var host = location.hostname.replace(/^www\./, "");
+    var body = document.body.innerText, title = document.title;
+    var price = null, mq = null, indir = "", zona = "";
+
+    function num(s){ if(s==null) return null; var m=String(s).replace(/\./g,"").match(/\d+/); return m?Number(m[0]):null; }
+
+    // 1) JSON-LD
+    try {
+      var lds = document.querySelectorAll('script[type="application/ld+json"]');
+      for (var i=0;i<lds.length;i++){
+        var j; try{ j=JSON.parse(lds[i].textContent);}catch(e){continue;}
+        var arr = Array.isArray(j)?j:(j["@graph"]?j["@graph"]:[j]);
+        for (var k=0;k<arr.length;k++){
+          var o=arr[k]; if(!o) continue;
+          var off=o.offers||(o.makesOffer&&o.makesOffer[0])||null;
+          if(off&&off.price&&!price) price=num(off.price);
+          if(o.price&&!price) price=num(o.price);
+          if(o.floorSize&&o.floorSize.value&&!mq) mq=num(o.floorSize.value);
+          var ad=o.address;
+          if(ad&&!indir){
+            if(typeof ad==="string") indir=ad;
+            else indir=[ad.streetAddress,ad.addressLocality].filter(Boolean).join(", ");
+          }
+        }
+      }
+    } catch(e){}
+
+    // 2) meta / OpenGraph
+    function meta(p){var e=document.querySelector('meta[property="'+p+'"],meta[name="'+p+'"]');return e?e.content:"";}
+    if(!price){ var mp=meta("product:price:amount")||meta("og:price:amount"); if(mp) price=num(mp); }
+    if(!indir){ var ot=meta("og:title"); if(ot) title=ot+" "+title; }
+
+    // 3) selettori per dominio + 4) regex generico
+    if(!price){
+      var pEl=document.querySelector('.info-data-price,.in-detail__price,[class*="price"]');
+      if(pEl) price=num(pEl.textContent);
+      if(!price){ var mm=body.match(/([\d.]{4,})\s*€|€\s*([\d.]{4,})/); if(mm) price=num(mm[1]||mm[2]); }
+    }
+    if(!mq){ var mq2=body.match(/(\d{2,4})\s*m(?:²|q\b|2\b)/i); if(mq2) mq=Number(mq2[1]); }
+    if(!indir){
+      var h1=document.querySelector('h1'); var ht=h1?h1.textContent.replace(/\s+/g," ").trim():"";
+      var src=ht||title;
+      var ai=(src.match(/in vendita in\s+(.+)$/i)||src.match(/\b(?:in|via|viale|piazza|largo|corso)\b.*/i)||[])[0]||src;
+      indir=ai.replace(/^in vendita in\s+/i,"").replace(/\s+—.*/,"").replace(/\s+\|.*/,"").trim();
+    }
+    // zona: dal title "..., ZONA, Roma" o "..., ZONA (Roma)"
+    var zm=title.match(/,\s*([^,]+?)\s*[,(]\s*Roma/i); if(zm) zona=zm[1].trim();
+
+    var lc=body.toLowerCase();
+    var ag=/tecnocasa|gabetti|remax|re\/max|grimaldi|toscano|professionecasa|engel\s*&\s*v/.test(lc)
+           ||(/\bagenzia\b/.test(lc)&&!/no agenzie|astenersi/.test(lc));
+    var note=[];
+    if(/no agenzie|astenersi.*agenzi|privato vende|vendesi privat|no intermediari/.test(lc))note.push("privato dichiarato");
+    if(/seminterrat|interrat/.test(lc))note.push("seminterrato");
+    if(/affittat|gia locato|nuda propriet/.test(lc))note.push("affittato/vincolo");
+    if(/\bvilla\b|villetta|casa indip|bifamiliare|a schiera/.test(lc))note.push("villa/casa indip");
+
+    var d={url:location.href,portale:host,price:price,mq:mq,indirizzo:indir,zona:zona,agenzia:ag,note:note.join("; ")};
+    if(!price||!mq){
+      // dati incompleti: apri comunque, l'utente completa a mano sul sito
+      note.push("estrazione parziale: completa a mano");
+      d.note=note.join("; ");
+    }
+    var enc=btoa(unescape(encodeURIComponent(JSON.stringify(d))));
+    window.open(SVC+"?d="+encodeURIComponent(enc),"_blank");
+  };
+}
+// minifica: prendi il corpo della funzione interna, sostituisci il segnaposto servizio
+const _src = extractorSource().toString();
+const BM = "javascript:(" + _src.replace("__SERVICE__", SERVICE) + ")();";
 document.getElementById("bm").href = BM;
 document.getElementById("bmcode").textContent = BM;
 function copyBm(){
