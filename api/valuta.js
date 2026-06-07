@@ -105,7 +105,7 @@ ${omiCompatto()}
 
 Compito:
 1. Dall'indirizzo, scegli la zona OMI più corretta usando i nomi e la tua conoscenza di Roma. Se incerto fra due, dillo e usa la più prudente.
-2. Calcola €/mq annuncio = prezzo/mq; sconto% = (medio_zona - €/mq)/medio_zona (positivo=sotto mercato); rendimento lordo = (loc_med*mq*12)/prezzo.
+2. Calcola €/mq annuncio = prezzo/mq; sconto% = (medio_zona - €/mq)/medio_zona (positivo=sotto mercato); rendimento lordo = (loc_med*mq*12)/prezzo. ETICHETTA SEMPRE il rendimento come "LORDO" e aggiungi una riga: "netto stimato ~metà (dopo cedolare 21%, sfitto, spese, tasse)". Non spacciare il lordo per netto.
 3. SEGNALA SEMPRE i bias: villa/casa/mq>300 (OMI è €/mq appartamenti, terreno distorce); seminterrato (vale meno); agenzia (l'utente cerca privati); affittato/nuda proprietà.
 4. Verdetto onesto in 3 righe: affare sì/no, sconto reale, cosa verificare.
 Sii sintetico. Non inventare dati mancanti: se mancano, dillo.`;
