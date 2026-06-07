@@ -141,24 +141,21 @@ function md2html(s){
   function inline(t){return t.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/\*(.+?)\*/g,"<em>$1</em>").replace(/`(.+?)`/g,"<code>$1</code>");}
 }
 
-// estrai sconto% e tono per il badge verdetto
-function buildVerdict(op){
-  var m=op.match(/([+\-−]?\s?\d{1,3})\s?%/); // primo % nel testo (sconto)
-  var pct=null; if(m){pct=Number(m[1].replace("−","-").replace(/\s/g,""));}
-  var lo=op.toLowerCase();
-  var tone="mid",big="—",label="Valutazione",sub="";
-  // segnali testuali
-  var isDeal=/(affare(?!\s*(no|:?\s*no))|sotto mercato|conviene|ottim[ao] occasione|buon prezzo)/.test(lo) && !/non è un affare|affare no|❌/.test(lo);
-  var notDeal=/non è un affare|affare no|sopra mercato|sopravvalutat|caro|❌|rinuncia/.test(lo);
+// badge verdetto dai campi STRUTTURATI del backend (sconto/esito calcolati, non pescati dal testo)
+function buildVerdict(op,dati){
+  var pct = (dati && typeof dati.sconto==="number") ? dati.sconto : null;
+  var esito = (dati && dati.esito) ? dati.esito : null;
+  var tone="mid",big="—",label="Valutazione",sub="Da valutare";
   if(pct!==null){
     big=(pct>0?"+":"")+pct+"%";
-    if(pct>=10){tone="good";label="Sotto mercato";}
-    else if(pct>=0){tone="mid";label="In linea";}
-    else{tone="bad";label="Sopra mercato";}
+    if(pct>=8){tone="good";label="Sotto mercato";sub="Possibile affare";}
+    else if(pct>=-3){tone="mid";label="In linea";sub="In linea col mercato";}
+    else{tone="bad";label="Sopra mercato";sub="Probabilmente caro";}
+  } else if(esito){
+    if(esito==="AFFARE"){tone="good";big="Sì";label="Affare";sub="Sotto mercato";}
+    else if(esito==="CARO"){tone="bad";big="No";label="Caro";sub="Sopra mercato";}
+    else{tone="mid";big="≈";label="In linea";}
   }
-  if(notDeal&&pct===null){tone="bad";big="No";label="Non un affare";}
-  if(isDeal&&pct===null){tone="good";big="Sì";label="Possibile affare";}
-  sub = isDeal? "Possibile affare":(notDeal?"Probabilmente caro":"Da valutare");
   return {tone:tone,big:big,label:label,sub:sub};
 }
 
@@ -168,7 +165,7 @@ function showResult(opinione,err,dati){
   var v=$("verdict"),md=$("md");
   if(err){v.innerHTML="";md.className="";md.innerHTML='<div class="errbox"></div>';md.querySelector(".errbox").textContent=err;window.scrollTo({top:0,behavior:"smooth"});return;}
   md.className="md";
-  var vd=buildVerdict(opinione);
+  var vd=buildVerdict(opinione,dati);
   v.className="verdict "+vd.tone;
   v.innerHTML='<div class="vbig '+vd.tone+'">'+escTxt(vd.big)+'</div><div><div class="vlabel">'+escTxt(vd.label)+'</div><div class="vsub">'+escTxt(vd.sub)+(dati&&dati.nFoto?' · '+dati.nFoto+' foto analizzate':'')+'</div></div>';
   md.innerHTML=md2html(opinione);

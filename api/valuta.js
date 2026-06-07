@@ -139,7 +139,11 @@ Compito:
 3. SEGNALA SEMPRE i bias: villa/casa/mq>300 (OMI è €/mq appartamenti, terreno distorce); seminterrato (vale meno); agenzia (l'utente cerca privati); affittato/nuda proprietà.
 4. Se ci sono FOTO/planimetrie: analizzale — stato reale (ristrutturato/da rifare), luminosità/esposizione, qualità finiture, distribuzione/planimetria (vani passanti, bagni ciechi), red flag (umidità, lavori). Pesa quanto visto nel giudizio.
 5. Verdetto onesto in 3 righe: affare sì/no, sconto reale, cosa verificare.
-Sii sintetico. Non inventare dati mancanti: se mancano, dillo.`;
+Sii sintetico. Non inventare dati mancanti: se mancano, dillo.
+
+IMPORTANTISSIMO: inizia la risposta con UNA riga in questo formato esatto, poi vai a capo e scrivi l'analisi:
+VERDETTO: sconto=<numero con segno, es. -3 o +12> | esito=<AFFARE|IN LINEA|CARO>
+Il numero sconto = (medio_zona - €/mq_annuncio)/medio_zona × 100, arrotondato intero. Negativo = sopra mercato (caro). Questa riga è per il sistema, NON ripeterla nell'analisi.`;
 
   const userText = `Annuncio:
 - Titolo/indirizzo: ${dati.indirizzo || dati.titolo || "?"}
@@ -214,9 +218,16 @@ export default async function handler(req, res) {
     if (!dati.prezzo || !dati.mq)
       return res.status(422).json({ error: "Servono almeno prezzo e mq." });
 
-    const opinione = await chiediClaude(dati);
-    // response leggero: non rimando foto/descrizione/html al client
-    const datiOut = { indirizzo: dati.indirizzo, prezzo: dati.prezzo, mq: dati.mq, zona: dati.zona, nFoto: (dati.foto || []).length };
+    let opinione = await chiediClaude(dati);
+    // estrai la riga VERDETTO strutturata (per il badge), poi rimuovila dal testo
+    let sconto = null, esito = null;
+    const vm = opinione.match(/VERDETTO:\s*sconto=\s*([+\-−]?\d+)\s*\|\s*esito=\s*(AFFARE|IN LINEA|CARO)/i);
+    if (vm) {
+      sconto = Number(vm[1].replace("−", "-"));
+      esito = vm[2].toUpperCase();
+      opinione = opinione.replace(vm[0], "").replace(/^\s+/, "");
+    }
+    const datiOut = { indirizzo: dati.indirizzo, prezzo: dati.prezzo, mq: dati.mq, zona: dati.zona, nFoto: (dati.foto || []).length, sconto, esito };
     return res.status(200).json({ opinione, dati: datiOut });
   } catch (e) {
     return res.status(500).json({ error: String(e.message || e) });
