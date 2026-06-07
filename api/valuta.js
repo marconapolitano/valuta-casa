@@ -41,17 +41,42 @@ const ZONE_NAMES = (() => {
 })();
 
 async function fetchHtml(url) {
-  // 1) diretto con header browser
+  // 1) ScraperAPI (se configurato): proxy residenziali + JS render → supera DataDome
+  if (process.env.SCRAPERAPI_KEY) {
+    try {
+      const api = "https://api.scraperapi.com/?api_key=" + process.env.SCRAPERAPI_KEY +
+        "&render=true&country_code=it&url=" + encodeURIComponent(url);
+      const r = await fetch(api, { signal: AbortSignal.timeout(55000) });
+      if (r.ok) { const h = await r.text(); if (h.length > 2000) return h; }
+    } catch (e) {}
+  }
+  // 2) diretto con header browser (portali deboli)
   try {
     const r = await fetch(url, { headers: BROWSER_HEADERS, redirect: "follow" });
     if (r.ok) { const h = await r.text(); if (h.length > 2000) return h; }
   } catch (e) {}
-  // 2) reader proxy (best-effort, alcuni portali leggeri passano)
+  // 3) reader proxy gratuito (best-effort)
   try {
     const r = await fetch("https://r.jina.ai/" + url, { headers: { "User-Agent": BROWSER_HEADERS["User-Agent"] } });
     if (r.ok) { const h = await r.text(); if (h.length > 800 && !/403|CAPTCHA/i.test(h.slice(0, 300))) return h; }
   } catch (e) {}
   throw new Error("blocked");
+}
+
+// estrae URL delle foto/planimetrie dall'HTML (per analisi vision)
+function estraiFoto(html, max) {
+  const urls = new Set();
+  // og:image + JSON-LD image + <img> con src di immagini annuncio
+  const og = html.match(/<meta[^>]+property="og:image"[^>]+content="([^"]+)"/i);
+  if (og) urls.add(og[1]);
+  const imgs = html.match(/https?:\/\/[^"' )]+\.(?:jpg|jpeg|webp)(?:\?[^"' )]*)?/gi) || [];
+  for (const u of imgs) {
+    // filtra: probabili foto immobile (escludi loghi/icone/avatar)
+    if (/logo|icon|avatar|placeholder|sprite|banner/i.test(u)) continue;
+    urls.add(u.replace(/&amp;/g, "&"));
+    if (urls.size >= (max || 4)) break;
+  }
+  return [...urls].slice(0, max || 4);
 }
 
 // estrae prezzo/mq/indirizzo/zona da una pagina annuncio (multi-portale, best-effort).
@@ -88,7 +113,12 @@ async function estraiDaUrl(url) {
   indir = indir.replace(/^in\s+/i, "").trim();
   if (zona && indir.toLowerCase().indexOf(zona.toLowerCase()) < 0) indir = (indir ? indir + ", " : "") + zona;
 
-  return { titolo: titolo.trim(), prezzo, mq, indirizzo: indir || zona, zona };
+  // descrizione (per bias: seminterrato/villa/agenzia/affittato) + foto
+  const descMatch = html.match(/<meta[^>]+name="description"[^>]+content="([^"]+)"/i);
+  const descrizione = descMatch ? descMatch[1].slice(0, 600) : text.slice(0, 400);
+  const foto = estraiFoto(html, 4);
+
+  return { titolo: titolo.trim(), prezzo, mq, indirizzo: indir || zona, zona, descrizione, foto };
 }
 
 function omiCompatto() {
@@ -107,17 +137,28 @@ Compito:
 1. Dall'indirizzo, scegli la zona OMI più corretta usando i nomi e la tua conoscenza di Roma. Se incerto fra due, dillo e usa la più prudente.
 2. Calcola €/mq annuncio = prezzo/mq; sconto% = (medio_zona - €/mq)/medio_zona (positivo=sotto mercato); rendimento lordo = (loc_med*mq*12)/prezzo. ETICHETTA SEMPRE il rendimento come "LORDO" e aggiungi una riga: "netto stimato ~metà (dopo cedolare 21%, sfitto, spese, tasse)". Non spacciare il lordo per netto.
 3. SEGNALA SEMPRE i bias: villa/casa/mq>300 (OMI è €/mq appartamenti, terreno distorce); seminterrato (vale meno); agenzia (l'utente cerca privati); affittato/nuda proprietà.
-4. Verdetto onesto in 3 righe: affare sì/no, sconto reale, cosa verificare.
+4. Se ci sono FOTO/planimetrie: analizzale — stato reale (ristrutturato/da rifare), luminosità/esposizione, qualità finiture, distribuzione/planimetria (vani passanti, bagni ciechi), red flag (umidità, lavori). Pesa quanto visto nel giudizio.
+5. Verdetto onesto in 3 righe: affare sì/no, sconto reale, cosa verificare.
 Sii sintetico. Non inventare dati mancanti: se mancano, dillo.`;
 
-  const userMsg = `Annuncio:
+  const userText = `Annuncio:
 - Titolo/indirizzo: ${dati.indirizzo || dati.titolo || "?"}
 - Prezzo: ${dati.prezzo ? dati.prezzo + " €" : "?"}
 - Superficie: ${dati.mq ? dati.mq + " mq" : "?"}
+- Descrizione: ${dati.descrizione || "—"}
 - Note extra: ${dati.note || "—"}
 ${dati.url ? "- Fonte: " + dati.url : ""}
+${dati.foto && dati.foto.length ? "\n(Sono allegate " + dati.foto.length + " foto dell'immobile da analizzare.)" : ""}
 
 Dammi la tua opinione.`;
+
+  // costruisci content: testo + eventuali immagini (vision)
+  const content = [{ type: "text", text: userText }];
+  const foto = (dati.foto || []).slice(0, 4);
+  for (const f of foto) {
+    content.push({ type: "image", source: { type: "url", url: f } });
+  }
+  const useVision = foto.length > 0;
 
   const resp = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -127,10 +168,10 @@ Dammi la tua opinione.`;
       "anthropic-version": "2023-06-01",
     },
     body: JSON.stringify({
-      model: MODEL,
-      max_tokens: MAX_TOKENS,
+      model: useVision ? "claude-sonnet-4-6" : MODEL, // Sonnet per leggere foto/planimetrie
+      max_tokens: useVision ? 1400 : MAX_TOKENS,
       system: sys,
-      messages: [{ role: "user", content: userMsg }],
+      messages: [{ role: "user", content }],
     }),
   });
   if (!resp.ok) {
@@ -171,7 +212,9 @@ export default async function handler(req, res) {
       return res.status(422).json({ error: "Servono almeno prezzo e mq." });
 
     const opinione = await chiediClaude(dati);
-    return res.status(200).json({ opinione, dati });
+    // response leggero: non rimando foto/descrizione/html al client
+    const datiOut = { indirizzo: dati.indirizzo, prezzo: dati.prezzo, mq: dati.mq, zona: dati.zona, nFoto: (dati.foto || []).length };
+    return res.status(200).json({ opinione, dati: datiOut });
   } catch (e) {
     return res.status(500).json({ error: String(e.message || e) });
   }

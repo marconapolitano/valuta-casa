@@ -1,106 +1,176 @@
 <!DOCTYPE html>
 <html lang="it"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0f1115">
+<meta name="theme-color" content="#0b0d12">
 <title>Valuta Casa — Roma</title>
 <style>
-:root{--bg:#0f1115;--card:#1a1e26;--line:#2a2f3a;--txt:#e6e9ef;--mut:#8b93a3;--accent:#4aa3ff;--good:#2ecc71;--bad:#e74c3c;}
+:root{--bg:#0b0d12;--bg2:#11141c;--card:#161a24;--line:#262b38;--txt:#eef1f7;--mut:#8a92a6;--accent:#5b9dff;--accent2:#7c5bff;--good:#27d796;--mid:#f5c451;--bad:#ff5d6c;}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.5 -apple-system,system-ui,sans-serif;padding-bottom:env(safe-area-inset-bottom);}
-.wrap{max-width:560px;margin:0 auto;padding:20px 16px 50px;}
-h1{font-size:22px;margin:0 0 2px;} .sub{color:var(--mut);font-size:13px;margin-bottom:20px;}
-label{display:block;font-size:13px;color:var(--mut);margin:14px 0 5px;font-weight:600;}
-input{width:100%;background:var(--card);color:var(--txt);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:16px;}
-input:focus{outline:none;border-color:var(--accent);}
-.row{display:flex;gap:10px;} .row>div{flex:1;}
-button{margin-top:20px;width:100%;background:var(--accent);color:#06121f;border:0;border-radius:12px;padding:16px;font-size:17px;font-weight:800;cursor:pointer;}
-button:disabled{opacity:.5;}
-.hint{color:var(--mut);font-size:12px;margin-top:5px;}
-.divider{display:flex;align-items:center;gap:10px;color:var(--mut);font-size:12px;margin:18px 0 4px;}
+body{margin:0;background:linear-gradient(180deg,#0b0d12,#0d1018);color:var(--txt);font:16px/1.55 -apple-system,system-ui,"Segoe UI",Roboto,sans-serif;min-height:100vh;}
+.wrap{max-width:600px;margin:0 auto;padding:max(20px,env(safe-area-inset-top)) 16px 60px;}
+.head{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:22px;}
+h1{font-size:21px;margin:0;font-weight:800;letter-spacing:-.3px;}
+.sub{color:var(--mut);font-size:13px;margin:0 0 22px;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 8px 30px rgba(0,0,0,.25);}
+label{display:block;font-size:12px;color:var(--mut);margin:0 0 6px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;}
+.field{margin-bottom:14px;}
+input{width:100%;background:var(--bg2);color:var(--txt);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:16px;transition:border .15s;}
+input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(91,157,255,.15);}
+input::placeholder{color:#566;}
+.row{display:flex;gap:10px;} .row>.field{flex:1;}
+.hint{color:var(--mut);font-size:12px;margin-top:6px;}
+.divider{display:flex;align-items:center;gap:12px;color:var(--mut);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:6px 0 16px;}
 .divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line);}
-.out{margin-top:24px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;white-space:pre-wrap;line-height:1.6;display:none;}
-.out.show{display:block;} .out.err{border-color:var(--bad);}
-.meta{font-size:12px;color:var(--mut);border-top:1px solid var(--line);margin-top:12px;padding-top:10px;}
+button.go{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:0;border-radius:14px;padding:17px;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(91,157,255,.3);transition:transform .1s,opacity .15s;}
+button.go:active{transform:scale(.98);} button.go:disabled{opacity:.55;box-shadow:none;}
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-3px;margin-right:8px;}
+@keyframes sp{to{transform:rotate(360deg);}}
+/* risultato */
+#result{display:none;}
+#result.show{display:block;animation:fade .3s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;}}
+.verdict{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:16px;margin-bottom:14px;border:1px solid var(--line);}
+.verdict.good{background:linear-gradient(135deg,rgba(39,215,150,.16),rgba(39,215,150,.04));border-color:rgba(39,215,150,.4);}
+.verdict.mid{background:linear-gradient(135deg,rgba(245,196,81,.16),rgba(245,196,81,.04));border-color:rgba(245,196,81,.4);}
+.verdict.bad{background:linear-gradient(135deg,rgba(255,93,108,.16),rgba(255,93,108,.04));border-color:rgba(255,93,108,.4);}
+.vbig{font-size:30px;font-weight:900;line-height:1;}
+.vbig.good{color:var(--good);} .vbig.mid{color:var(--mid);} .vbig.bad{color:var(--bad);}
+.vlabel{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;font-weight:700;}
+.vsub{font-size:14px;color:var(--txt);}
+.md{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 18px 18px;}
+.md h1,.md h2,.md h3{font-size:15px;margin:18px 0 8px;color:var(--accent);font-weight:800;letter-spacing:.2px;}
+.md p{margin:8px 0;} .md strong{color:#fff;}
+.md ul{margin:8px 0;padding-left:20px;} .md li{margin:4px 0;}
+.md table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px;}
+.md th,.md td{border:1px solid var(--line);padding:8px 10px;text-align:left;}
+.md th{background:var(--bg2);color:var(--mut);font-weight:700;}
+.md hr{border:0;border-top:1px solid var(--line);margin:14px 0;}
+.errbox{background:rgba(255,93,108,.12);border:1px solid rgba(255,93,108,.4);border-radius:14px;padding:14px;color:#ffd0d5;}
+.again{margin-top:14px;background:var(--bg2);color:var(--txt);border:1px solid var(--line);border-radius:12px;padding:13px;width:100%;font-size:15px;font-weight:700;cursor:pointer;}
 .pwbox{display:none;}
+.foot{text-align:center;color:#445;font-size:11px;margin-top:24px;}
 </style></head><body><div class="wrap">
-<h1>🏠 Valuta Casa</h1>
-<div class="sub">Buon affare o no? Confronto coi valori OMI ufficiali di Roma (2025).</div>
 
-<label>Link annuncio (Idealista, Immobiliare…)</label>
-<input id="url" type="url" inputmode="url" placeholder="incolla qui il link" autocomplete="off">
-<div class="hint">Provo ad aprirlo. Se il portale blocca, compila i 3 campi sotto.</div>
+<div class="head"><div class="logo">🏠</div><div><h1>Valuta Casa</h1></div></div>
+<p class="sub">Buon affare o no? Confronto coi valori OMI ufficiali di Roma (2025).</p>
 
-<div class="divider">dati dell'annuncio</div>
-<div class="row">
-<div><label>Prezzo €</label><input id="prezzo" type="number" inputmode="numeric" placeholder="380000"></div>
-<div><label>Superficie m²</label><input id="mq" type="number" inputmode="numeric" placeholder="95"></div>
+<div id="form">
+<div class="card">
+  <div class="field">
+    <label>Link annuncio</label>
+    <input id="url" type="url" inputmode="url" placeholder="incolla link Idealista / Immobiliare…" autocomplete="off">
+    <div class="hint">Provo ad aprirlo e leggere foto. Se il portale blocca, compila i campi sotto.</div>
+  </div>
+  <div class="divider">oppure dati a mano</div>
+  <div class="row">
+    <div class="field"><label>Prezzo €</label><input id="prezzo" type="number" inputmode="numeric" placeholder="380000"></div>
+    <div class="field"><label>m²</label><input id="mq" type="number" inputmode="numeric" placeholder="95"></div>
+  </div>
+  <div class="field"><label>Zona</label><input id="zona" list="zonelist" placeholder="es. Monteverde Nuovo" autocomplete="off"><datalist id="zonelist"></datalist></div>
+  <div class="field"><label>Note (facoltativo)</label><input id="note" placeholder="villa? seminterrato? agenzia? affittato?"></div>
+  <div class="pwbox field" id="pwbox"><label>Password</label><input id="pw" type="password" placeholder="password" autocomplete="current-password"></div>
+  <button class="go" id="go">Valuta</button>
 </div>
-<label>Zona / quartiere</label>
-<input id="zona" list="zonelist" placeholder="es. Monteverde Nuovo" autocomplete="off">
-<datalist id="zonelist"></datalist>
-<label>Note <span class="hint">(facoltativo: villa? seminterrato? agenzia? affittato?)</span></label>
-<input id="note" placeholder="es. privato, ristrutturato">
-
-<div class="pwbox" id="pwbox">
-<label>Password</label>
-<input id="pw" type="password" placeholder="password" autocomplete="current-password">
 </div>
 
-<button id="go">Valuta</button>
-<div id="out" class="out"></div>
+<div id="result">
+  <div id="verdict"></div>
+  <div id="md" class="md"></div>
+  <button class="again" id="again">↺ Valuta un altro</button>
+</div>
+
+<div class="foot">Dati OMI Agenzia Entrate II sem. 2025 · stima indicativa, non perizia</div>
 </div>
 
 <script>
 var $=function(i){return document.getElementById(i);};
 var ZONES=["Acilia Nord","Acilia Nuova","Acilia Sud","Acqua Vergine","Agro Romano Ovest","Alessandrino","Anagnina Valle Marciana","Appia Antica","Appio Claudio","Appio Latino","Appio Metronio","Appio Nocera Umbra","Appio Villa Fiorelli","Arco Di Travertino","Ardeatina Selvotta","Ardeatino Millevoi","Ardeatino Ottavo Colle","Aurelio Gregorio Vii","Aurelio Madonna Del Riposo","Aurelio Monte Di Creta","Aurelio Val Cannuta","Aventino","Balduina Belsito","Balduina Giovenale","Batteria Nomentana","Bel Poggio","Boccea Quartaccio","Bologna","Borghesiana","Borgo","Bosco Degli Arvali","Bravetta","Bufalotta","Camilluccia","Campitelli","Capannelle","Casaccia","Casal Bertone","Casal Boccone Bufalotta","Casal Bruciato","Casal Dei Pazzi","Casal Lumbroso","Casal Monastero","Casal Morena","Casal Palocco","Casalotti","Casalotti  Pantan Monastero","Casalotti Selva Candida","Casalotti Valle Santa","Casetta Mattei","Casilino Due Torri","Casilino Marranella","Casilino Villa De Santis","Cassia Due Ponti","Castel Di Decima","Castel Di Guido","Castel Di Leva","Castel Giubileo","Castel Romano","Castelverde","Castro Pretorio","Cavalleggeri","Cecchignola","Celio","Centocelle","Cesano","Cinecitta` Don Bosco","Cinecitta` Est","Cinecitta` Lamaro","Cipro","Citta` D`Europa","Collatino","Colle Mattia","Colle Salario","Colli Aniene","Colli Portuensi","Collina Fleming","Conca D`Oro","Corcolle","Corso Vittorio","Cortina D`Ampezzo","Decima","Della Vittoria","Divino Amore","Dragona","Dragoncello","Due Leoni","Esquilino","Falcognana","Farnesina","Ferratella","Fidene","Fiera Di Roma","Finocchio","Fioranello","Flaminio","Flaminio Porta Del Popolo","Fontana Candida","Fonte Laurentina","Fonte Meravigliosa","Fonte Ostiense","Fosso San Giuliano","Fosso Sant`Andrea","Garbatella","Giardinetti","Giuliano Dalmata","Gregna Sant`Andrea","Grotta Perfetta","Grottarossa","Infernetto","Isola Farnese","La Cinquina","La Giustiniana","La Rustica","La Storta","La Storta Casale San Nicola","Labaro","Lago Regillo","Lanciani","Longarina","Lucrezia Romana","Ludovisi","Lunghezza","Madonnetta","Magliana","Malagrotta","Malborghetto","Marco Polo","Marconi","Massimina","Mezzocammino","Montagnola","Monte Del Marmo","Monte Mario Alto","Monte Pietra Pertusa","Montesacro","Montespaccato","Monteverde Nuovo","Monteverde Vecchio","Monti","Morena","Morena Gasperina","Mostacciano","Muratella","Nocetta","Nomentano Kant","Nomentano Torlonia","Nuovo Salario","Olgiata","Osteria Del Curato","Osteria Nuova","Ostia Antica","Ostia Levante","Ostia Ponente","Ostiense","Ottavia Lucchina","Ottavia Palmarola","Parco Di Veio Prato Della Corte","Parioli","Passo Lombardo","Pian Savelli","Piana Del Sole","Pietralata","Pietralata Tiburtino","Pigneto","Pinciano","Pineta Sacchetti","Pisana","Podere Rosa","Ponte Di Nona","Ponte Galeria","Ponte Mammolo","Ponte Milvio","Porta Di Roma","Porta Portese","Portonaccio","Portuense","Prati","Prati Fiscali","Prenestino Colle Del Sole","Prenestino Labicano","Prima Porta","Primavalle","Quadraro","Quarto Miglio","Riserva Della Marcigliana","Roma 70","Romanina","Romanina Tor Vergata","Sacco Pastore","Salario","Salario Africano","Salario Trieste","Sallustiano","San Basilio","San Lorenzo","San Paolo","San Saba","San Vittorino","Sant`Angelo","Santa Cornelia","Santa Maria Di Galeria","Santa Palomba","Saxa Rubra","Serpentara","Settebagni","Settecamini","Settecamini Case Rosse","Spinaceto","Spregamore","Stagni Di Ostia","Statuario","Talenti","Testaccio","Tiberina","Tintoretto","Tomba Di Nerone","Tor Bella Monaca","Tor Bella Monaca Peep","Tor Cervara","Tor De` Cenci","Tor Fiscale","Tor Marancia Navigatori","Tor Pagnotta","Tor Pignattara","Tor Sapienza","Tor Tre Teste","Tor Vergata Universita`","Torraccia Di San Basilio","Torre Angela","Torre Gaia","Torre Maura","Torre Spaccata","Torrenova","Torresina","Torrevecchia","Torrino Nord","Torrino Sud","Tragliatella","Trastevere","Tridente","Trigoria","Trionfale Igea","Trullo","Tufello","Valle Fiorita","Valle Muricana","Vallerano","Valmelaina","Verderocca","Vermicino","Vigna Clara","Vigne Nuove","Villa Spada","Villaggio Breda","Villaggio Olimpico","Villaverde","Viminale","Vitinia"];
 var dl=$("zonelist"); ZONES.forEach(function(z){var o=document.createElement("option");o.value=z;dl.appendChild(o);});
+var pw=localStorage.getItem("vc_pw"); if(!pw)$("pwbox").style.display="block";
 
-// password salvata
-var pw=localStorage.getItem("vc_pw");
-if(!pw) $("pwbox").style.display="block";
+(function(){var p=new URLSearchParams(location.search).get("d");if(!p)return;try{var d=JSON.parse(decodeURIComponent(escape(atob(p))));if(d.url)$("url").value=d.url;if(d.price)$("prezzo").value=d.price;if(d.mq)$("mq").value=d.mq;if(d.zona)$("zona").value=d.zona;else if(d.indirizzo)$("zona").value=d.indirizzo;if(d.note||d.agenzia)$("note").value=[d.note,d.agenzia?"agenzia":""].filter(Boolean).join("; ");if(pw&&d.price&&d.mq)setTimeout(function(){$("go").click();},300);}catch(e){}})();
 
-// dati dal vecchio bookmarklet/shortcut via ?d=
-(function(){
-  var p=new URLSearchParams(location.search).get("d"); if(!p) return;
-  try{
-    var d=JSON.parse(decodeURIComponent(escape(atob(p))));
-    if(d.url)$("url").value=d.url;
-    if(d.price)$("prezzo").value=d.price;
-    if(d.mq)$("mq").value=d.mq;
-    if(d.zona)$("zona").value=d.zona;
-    else if(d.indirizzo)$("zona").value=d.indirizzo;
-    if(d.note||d.agenzia)$("note").value=[d.note,d.agenzia?"agenzia":""].filter(Boolean).join("; ");
-    if(pw && d.price && d.mq) setTimeout(function(){$("go").click();},300);
-  }catch(e){}
-})();
+$("again").addEventListener("click",function(){$("result").className="";$("form").style.display="block";window.scrollTo({top:0,behavior:"smooth"});});
 
 $("go").addEventListener("click",function(){
   var password=pw||$("pw").value;
-  if(!password){$("pwbox").style.display="block";show("Inserisci la password (prima volta).",true);return;}
-  localStorage.setItem("vc_pw",password); pw=password;
-  var body={password:password,url:$("url").value.trim()||undefined,
-    prezzo:$("prezzo").value?Number($("prezzo").value):undefined,
-    mq:$("mq").value?Number($("mq").value):undefined,
-    indirizzo:$("zona").value.trim()||undefined,
-    note:$("note").value.trim()||undefined};
-  if(!body.url && (!body.prezzo||!body.mq||!body.indirizzo)){
-    show("Incolla un link, oppure compila prezzo + m² + zona.",true);return;
-  }
-  $("go").disabled=true;$("go").textContent="Valuto…";
+  if(!password){$("pwbox").style.display="block";return;}
+  localStorage.setItem("vc_pw",password);pw=password;
+  var body={password:password,url:$("url").value.trim()||undefined,prezzo:$("prezzo").value?Number($("prezzo").value):undefined,mq:$("mq").value?Number($("mq").value):undefined,indirizzo:$("zona").value.trim()||undefined,note:$("note").value.trim()||undefined};
+  if(!body.url&&(!body.prezzo||!body.mq||!body.indirizzo)){alert("Incolla un link, oppure prezzo + m² + zona.");return;}
+  var g=$("go");g.disabled=true;g.innerHTML='<span class="spin"></span>Analizzo…';
   fetch("/api/valuta",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)})
    .then(function(r){return r.json().then(function(j){return{ok:r.ok,j:j};});})
    .then(function(res){
-     if(!res.ok){show(res.j.error||"Errore",true);}
-     else{var m=res.j.dati?("dati: "+(res.j.dati.indirizzo||"?")+" · "+(res.j.dati.prezzo||"?")+"€ · "+(res.j.dati.mq||"?")+"m²"):"";show(res.j.opinione,false,m);}
+     if(!res.ok){showResult(null,res.j.error||"Errore");}
+     else{showResult(res.j.opinione,null,res.j.dati);}
    })
-   .catch(function(e){show("Errore di rete: "+e.message,true);})
-   .then(function(){$("go").disabled=false;$("go").textContent="Valuta";});
+   .catch(function(e){showResult(null,"Errore di rete: "+e.message);})
+   .then(function(){g.disabled=false;g.textContent="Valuta";});
 });
 
-function show(txt,isErr,meta){
-  var o=$("out");o.className="out show"+(isErr?" err":"");o.textContent="";
-  var b=document.createElement("div");b.textContent=txt;o.appendChild(b);
-  if(meta){var m=document.createElement("div");m.className="meta";m.textContent=meta;o.appendChild(m);}
-  o.scrollIntoView({behavior:"smooth",block:"nearest"});
+// mini markdown -> HTML (no innerHTML su input non fidato: l'opinione viene da Claude, ns backend)
+function md2html(s){
+  function esc(t){return t.replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+  var lines=esc(s).split("\n"),out=[],i=0,inTbl=false,inUl=false;
+  function closeUl(){if(inUl){out.push("</ul>");inUl=false;}}
+  function closeTbl(){if(inTbl){out.push("</tbody></table>");inTbl=false;}}
+  while(i<lines.length){
+    var l=lines[i];
+    if(/^\s*\|.*\|\s*$/.test(l)){
+      var cells=l.trim().replace(/^\||\|$/g,"").split("|");
+      if(/^[\s:|-]+$/.test(l.replace(/\|/g,""))){i++;continue;} // riga separatore
+      if(!inTbl){out.push('<table><tbody>');inTbl=true;}
+      var tag=cells.join("").match(/[a-z0-9]/i)?"td":"td";
+      out.push("<tr>"+cells.map(function(c){return "<td>"+inline(c.trim())+"</td>";}).join("")+"</tr>");
+      i++;continue;
+    } else closeTbl();
+    var h=l.match(/^(#{1,3})\s+(.*)/);
+    if(h){closeUl();out.push("<h"+h[1].length+">"+inline(h[2])+"</h"+h[1].length+">");i++;continue;}
+    if(/^\s*[-*]\s+/.test(l)){if(!inUl){out.push("<ul>");inUl=true;}out.push("<li>"+inline(l.replace(/^\s*[-*]\s+/,""))+"</li>");i++;continue;}
+    closeUl();
+    if(/^\s*---+\s*$/.test(l)){out.push("<hr>");i++;continue;}
+    if(l.trim()==="")out.push("");else out.push("<p>"+inline(l)+"</p>");
+    i++;
+  }
+  closeUl();closeTbl();
+  return out.join("");
+  function inline(t){return t.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/\*(.+?)\*/g,"<em>$1</em>").replace(/`(.+?)`/g,"<code>$1</code>");}
 }
+
+// estrai sconto% e tono per il badge verdetto
+function buildVerdict(op){
+  var m=op.match(/([+\-−]?\s?\d{1,3})\s?%/); // primo % nel testo (sconto)
+  var pct=null; if(m){pct=Number(m[1].replace("−","-").replace(/\s/g,""));}
+  var lo=op.toLowerCase();
+  var tone="mid",big="—",label="Valutazione",sub="";
+  // segnali testuali
+  var isDeal=/(affare(?!\s*(no|:?\s*no))|sotto mercato|conviene|ottim[ao] occasione|buon prezzo)/.test(lo) && !/non è un affare|affare no|❌/.test(lo);
+  var notDeal=/non è un affare|affare no|sopra mercato|sopravvalutat|caro|❌|rinuncia/.test(lo);
+  if(pct!==null){
+    big=(pct>0?"+":"")+pct+"%";
+    if(pct>=10){tone="good";label="Sotto mercato";}
+    else if(pct>=0){tone="mid";label="In linea";}
+    else{tone="bad";label="Sopra mercato";}
+  }
+  if(notDeal&&pct===null){tone="bad";big="No";label="Non un affare";}
+  if(isDeal&&pct===null){tone="good";big="Sì";label="Possibile affare";}
+  sub = isDeal? "Possibile affare":(notDeal?"Probabilmente caro":"Da valutare");
+  return {tone:tone,big:big,label:label,sub:sub};
+}
+
+function showResult(opinione,err,dati){
+  $("form").style.display="none";
+  var r=$("result");r.className="show";
+  var v=$("verdict"),md=$("md");
+  if(err){v.innerHTML="";md.className="";md.innerHTML='<div class="errbox"></div>';md.querySelector(".errbox").textContent=err;window.scrollTo({top:0,behavior:"smooth"});return;}
+  md.className="md";
+  var vd=buildVerdict(opinione);
+  v.className="verdict "+vd.tone;
+  v.innerHTML='<div class="vbig '+vd.tone+'">'+escTxt(vd.big)+'</div><div><div class="vlabel">'+escTxt(vd.label)+'</div><div class="vsub">'+escTxt(vd.sub)+(dati&&dati.nFoto?' · '+dati.nFoto+' foto analizzate':'')+'</div></div>';
+  md.innerHTML=md2html(opinione);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function escTxt(t){var d=document.createElement("div");d.textContent=t;return d.innerHTML;}
 </script></body></html>
