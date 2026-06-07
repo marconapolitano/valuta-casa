@@ -71,16 +71,30 @@ function estrai() {
   const dm = document.querySelector('.comment,[class*="description"],.adCommentsLanguage,[class*="in-readAll"]');
   const descrizione = (dm ? dm.textContent : body).replace(/\s+/g, " ").trim().slice(0, 600);
 
-  // FOTO: raccolgo URL immagini grandi (no loghi/icone), max 4
-  const fotoSet = new Set(ldImgs.filter(Boolean));
+  // FOTO + PLANIMETRIE: raccolgo URL immobile, taggando le planimetrie.
+  // Lazy-load: leggo anche data-src / srcset / data-lazy (URL presente anche se img non caricata).
+  const isPlan = (u) => /plan(?:imetr)?|floor[\-_]?plan|grundriss/i.test(u);
+  const isPlanEl = (im) => isPlan((im.alt || "") + " " + (im.className || "") + " " + (im.closest("[class*='plan'],[data-tab*='plan'],[id*='plan']") ? "plan" : ""));
+  const imgMap = new Map(); // url -> plan(bool); dedup mantenendo plan=true se mai visto
+  const consider = (u, plan) => {
+    if (!u || !/^https?:/.test(u)) return;
+    u = u.split(" ")[0].replace(/&amp;/g, "&"); // srcset: primo candidato
+    if (/sprite|favicon|\/logo|avatar|placeholder|banner|\/static\/|googleapis|gstatic|map(?:box|s)?\./i.test(u) && !isPlan(u)) return;
+    imgMap.set(u, (imgMap.get(u) || false) || plan);
+  };
+  ldImgs.filter(Boolean).forEach((u) => consider(u, isPlan(u)));
   document.querySelectorAll("img").forEach((im) => {
-    const u = im.currentSrc || im.src || "";
-    if (!/^https?:/.test(u)) return;
-    if (/logo|icon|avatar|placeholder|sprite|banner|map|static/i.test(u)) return;
-    const w = im.naturalWidth || im.width || 0;
-    if (w >= 300) fotoSet.add(u);
+    const cand = im.currentSrc || im.src || im.getAttribute("data-src") || im.getAttribute("data-lazy") || (im.getAttribute("srcset") || "").split(",").pop() || "";
+    const w = im.naturalWidth || im.width || parseInt(im.getAttribute("width")) || 0;
+    const plan = isPlan(cand) || isPlanEl(im);
+    // tieni: planimetrie sempre, foto solo se abbastanza grandi o dimensione ignota (lazy)
+    if (plan || w === 0 || w >= 300) consider(cand, plan);
   });
-  const foto = [...fotoSet].slice(0, 4);
+  // ordina: planimetrie prima (analisi taglio), poi foto; max 5
+  const foto = [...imgMap.entries()]
+    .map(([url, plan]) => ({ url, plan }))
+    .sort((a, b) => (b.plan ? 1 : 0) - (a.plan ? 1 : 0))
+    .slice(0, 5);
 
   return { url: location.href, portale: location.hostname.replace(/^www\./, ""), price, mq, indirizzo: indir || zona, zona, agenzia: ag, note: note.join("; "), descrizione, foto };
 }

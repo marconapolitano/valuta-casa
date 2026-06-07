@@ -63,20 +63,29 @@ async function fetchHtml(url) {
   throw new Error("blocked");
 }
 
-// estrae URL delle foto/planimetrie dall'HTML (per analisi vision)
+// rileva se un URL è (probabilmente) una planimetria
+const isPlanimetria = (u) => /plan(?:imetr)?|floor[\-_]?plan|grundriss|\/map\b/i.test(u);
+
+// estrae URL foto+planimetrie dall'HTML. Ritorna {url, plan} ordinati: planimetrie prima.
 function estraiFoto(html, max) {
-  const urls = new Set();
-  // og:image + JSON-LD image + <img> con src di immagini annuncio
+  const seen = new Set();
+  const out = [];
+  const add = (u) => {
+    if (!u) return;
+    u = u.replace(/&amp;/g, "&");
+    if (seen.has(u)) return;
+    if (/logo|icon|avatar|placeholder|sprite|banner/i.test(u) && !isPlanimetria(u)) return;
+    seen.add(u);
+    out.push({ url: u, plan: isPlanimetria(u) });
+  };
   const og = html.match(/<meta[^>]+property="og:image"[^>]+content="([^"]+)"/i);
-  if (og) urls.add(og[1]);
-  const imgs = html.match(/https?:\/\/[^"' )]+\.(?:jpg|jpeg|webp)(?:\?[^"' )]*)?/gi) || [];
-  for (const u of imgs) {
-    // filtra: probabili foto immobile (escludi loghi/icone/avatar)
-    if (/logo|icon|avatar|placeholder|sprite|banner/i.test(u)) continue;
-    urls.add(u.replace(/&amp;/g, "&"));
-    if (urls.size >= (max || 4)) break;
-  }
-  return [...urls].slice(0, max || 4);
+  if (og) add(og[1]);
+  // src, data-src, srcset, lazy attrs: prendi tutti gli URL immagine grezzi
+  const imgs = html.match(/https?:\/\/[^"' )]+\.(?:jpg|jpeg|webp|png)(?:\?[^"' )]*)?/gi) || [];
+  for (const u of imgs) add(u);
+  // planimetrie prima (analisi layout), poi foto; cap a max
+  out.sort((a, b) => (b.plan ? 1 : 0) - (a.plan ? 1 : 0));
+  return out.slice(0, max || 5);
 }
 
 // estrae prezzo/mq/indirizzo/zona da una pagina annuncio (multi-portale, best-effort).
@@ -116,7 +125,7 @@ async function estraiDaUrl(url) {
   // descrizione (per bias: seminterrato/villa/agenzia/affittato) + foto
   const descMatch = html.match(/<meta[^>]+name="description"[^>]+content="([^"]+)"/i);
   const descrizione = descMatch ? descMatch[1].slice(0, 600) : text.slice(0, 400);
-  const foto = estraiFoto(html, 4);
+  const foto = estraiFoto(html, 5); // [{url, plan}]
 
   return { titolo: titolo.trim(), prezzo, mq, indirizzo: indir || zona, zona, descrizione, foto };
 }
@@ -138,13 +147,23 @@ Compito:
 2. NON calcolare tu lo sconto: il sistema lo calcola con la matematica esatta. Tu commenta i valori OMI della zona scelta e il €/mq dell'annuncio.
 3. Rendimento: usa loc_med della zona; ETICHETTA "LORDO" + riga "netto stimato ~metà (dopo cedolare 21%, sfitto, spese, tasse)".
 4. SEGNALA SEMPRE i bias: villa/casa/mq>300 (OMI è €/mq appartamenti, terreno distorce); seminterrato (vale meno); agenzia (l'utente cerca privati); affittato/nuda proprietà.
-5. Se ci sono FOTO/planimetrie: analizzale — stato reale (ristrutturato/da rifare), luminosità/esposizione, qualità finiture, distribuzione (vani passanti, bagni ciechi), red flag (umidità, lavori). Pesa quanto visto.
+5. IMMAGINI: le ricevi etichettate (🗺️ PLANIMETRIA o 📷 foto).
+   - FOTO → stato reale (ristrutturato/da rifare), luminosità/esposizione, finiture, red flag (umidità, lavori).
+   - PLANIMETRIA → taglio e distribuzione (vani passanti vs indipendenti, bagni ciechi, cucina abitabile/cucinotto, doppi affacci, ingresso), quanti veri vani, se i mq dichiarati sembrano coerenti col disegno (segnala se sospetti mq "gonfiati" con balconi/terrazzi conteggiati). La planimetria pesa molto sul valore reale.
+   - Se manca la planimetria, dillo: "planimetria non disponibile, taglio da verificare".
 6. Verdetto onesto in 3 righe: affare sì/no, cosa verificare.
 Sii sintetico. Non inventare dati mancanti.
 
 IMPORTANTISSIMO: inizia la risposta con UNA riga in questo formato esatto, poi vai a capo:
 ZONA: <codice zona OMI scelto, es. C51>
 Questa riga è per il sistema (calcolerà lo sconto), NON ripeterla nell'analisi.`;
+
+  // normalizza foto: accetta sia stringhe (vecchio) sia {url,plan} (nuovo)
+  const foto = (dati.foto || []).slice(0, 5).map((f) =>
+    typeof f === "string" ? { url: f, plan: isPlanimetria(f) } : { url: f.url, plan: !!f.plan }
+  ).filter((f) => f.url);
+  const nPlan = foto.filter((f) => f.plan).length;
+  const nFotoReali = foto.length - nPlan;
 
   const userText = `Annuncio:
 - Titolo/indirizzo: ${dati.indirizzo || dati.titolo || "?"}
@@ -153,15 +172,14 @@ Questa riga è per il sistema (calcolerà lo sconto), NON ripeterla nell'analisi
 - Descrizione: ${dati.descrizione || "—"}
 - Note extra: ${dati.note || "—"}
 ${dati.url ? "- Fonte: " + dati.url : ""}
-${dati.foto && dati.foto.length ? "\n(Sono allegate " + dati.foto.length + " foto dell'immobile da analizzare.)" : ""}
+${foto.length ? `\nAllego ${foto.length} immagini in quest'ordine:` : ""}${foto.map((f, i) => `\n  ${i + 1}. ${f.plan ? "🗺️ PLANIMETRIA (leggi i vani, il taglio, esposizione, doppi affacci, bagni ciechi, mq apparenti)" : "📷 foto immobile"}`).join("")}
 
 Dammi la tua opinione.`;
 
-  // costruisci content: testo + eventuali immagini (vision)
+  // costruisci content: testo + immagini (vision). Planimetrie già in testa.
   const content = [{ type: "text", text: userText }];
-  const foto = (dati.foto || []).slice(0, 4);
   for (const f of foto) {
-    content.push({ type: "image", source: { type: "url", url: f } });
+    content.push({ type: "image", source: { type: "url", url: f.url } });
   }
   const useVision = foto.length > 0;
 
@@ -221,23 +239,28 @@ export default async function handler(req, res) {
 
     let opinione = await chiediClaude(dati);
     // Claude ritorna solo la ZONA; il BACKEND calcola sconto/rendimento (matematica esatta)
-    let zonaCode = null, sconto = null, esito = null, rendimento = null;
+    let zonaCode = null, sconto = null, esito = null, rendimento = null, eurMq = null, omi = null;
     const zm = opinione.match(/ZONA:\s*([A-Z]\d{1,3})/i);
     if (zm) {
       zonaCode = zm[1].toUpperCase();
       opinione = opinione.replace(zm[0], "").replace(/^\s+/, "");
       const z = omiData.zone[zonaCode];
       if (z && dati.prezzo && dati.mq) {
-        const eurMq = dati.prezzo / dati.mq;
+        eurMq = Math.round(dati.prezzo / dati.mq);
         sconto = Math.round(((z.compr_med - eurMq) / z.compr_med) * 100);
         esito = sconto >= 8 ? "AFFARE" : (sconto >= -3 ? "IN LINEA" : "CARO");
+        omi = { min: z.compr_min, med: z.compr_med, max: z.compr_max }; // per barra visiva
         if (z.loc_min && z.loc_max) {
           const locMed = (z.loc_min + z.loc_max) / 2;
           rendimento = +(((locMed * dati.mq * 12) / dati.prezzo) * 100).toFixed(1);
         }
       }
     }
+    // conteggio immagini (foto vs planimetrie) per il badge
+    const ft = (dati.foto || []).map((f) => (typeof f === "string" ? { plan: isPlanimetria(f) } : f));
+    const nPlan = ft.filter((f) => f && f.plan).length;
     const datiOut = { indirizzo: dati.indirizzo, prezzo: dati.prezzo, mq: dati.mq,
+      eurMq, omi, nPlan,
       zona: zonaCode, zonaNome: zonaCode && omiData.zone[zonaCode] ? omiData.zone[zonaCode].nome : null,
       nFoto: (dati.foto || []).length, sconto, esito, rendimento };
     return res.status(200).json({ opinione, dati: datiOut });
