@@ -185,7 +185,7 @@ Dammi la tua opinione.`;
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "POST only" });
   try {
-    const { password, url, prezzo, mq, indirizzo, note } = req.body || {};
+    const { password, url, prezzo, mq, indirizzo, note, foto, descrizione } = req.body || {};
 
     if (!process.env.APP_PASSWORD || password !== process.env.APP_PASSWORD)
       return res.status(401).json({ error: "Password errata" });
@@ -194,9 +194,12 @@ export default async function handler(req, res) {
     if (!rateOk(ip))
       return res.status(429).json({ error: `Limite ${LIMIT_PER_DAY}/giorno raggiunto` });
 
-    // dati: da URL se dato, altrimenti a mano
-    let dati = { url, prezzo, mq, indirizzo, note };
-    if (url) {
+    // dati: da estensione (foto+descrizione già estratte dal browser reale),
+    // da URL (scraping best-effort), o a mano.
+    let dati = { url, prezzo, mq, indirizzo, note, descrizione,
+      foto: Array.isArray(foto) ? foto.slice(0, 4) : undefined };
+    // se l'estensione ha già mandato prezzo+mq+zona, NON serve aprire l'URL
+    if (url && (!prezzo || !mq || !indirizzo)) {
       try {
         const e = await estraiDaUrl(url);
         dati = { ...e, ...dati, prezzo: prezzo || e.prezzo, mq: mq || e.mq, indirizzo: indirizzo || e.indirizzo };
