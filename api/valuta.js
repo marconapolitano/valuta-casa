@@ -23,27 +23,72 @@ function rateOk(ip) {
   return n <= LIMIT_PER_DAY;
 }
 
-// estrae prezzo/mq/indirizzo da una pagina Idealista (best-effort).
-async function estraiDaUrl(url) {
-  const r = await fetch(url, {
-    headers: { "User-Agent": "Mozilla/5.0 (Macintosh) AppleWebKit/537.36" },
-  });
-  if (!r.ok) throw new Error(`fetch ${r.status}`);
-  const html = await r.text();
-  const text = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+const BROWSER_HEADERS = {
+  "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+  "Accept-Language": "it-IT,it;q=0.9",
+  "Referer": "https://www.google.com/",
+};
 
+// nomi-zona OMI per scansione testo (universale, ogni portale)
+const ZONE_NAMES = (() => {
+  const set = new Set();
+  for (const e of Object.values(omiData.zone)) {
+    let n = e.nome.split("(")[0].replace(/^C\.STORICO:/i, "").trim();
+    n.split(/[-\/]/).forEach((p) => { p = p.trim(); if (p.length >= 4 && !/^ROMA$/i.test(p) && !/^ZONA /i.test(p)) set.add(p); });
+  }
+  return [...set].sort((a, b) => b.length - a.length);
+})();
+
+async function fetchHtml(url) {
+  // 1) diretto con header browser
+  try {
+    const r = await fetch(url, { headers: BROWSER_HEADERS, redirect: "follow" });
+    if (r.ok) { const h = await r.text(); if (h.length > 2000) return h; }
+  } catch (e) {}
+  // 2) reader proxy (best-effort, alcuni portali leggeri passano)
+  try {
+    const r = await fetch("https://r.jina.ai/" + url, { headers: { "User-Agent": BROWSER_HEADERS["User-Agent"] } });
+    if (r.ok) { const h = await r.text(); if (h.length > 800 && !/403|CAPTCHA/i.test(h.slice(0, 300))) return h; }
+  } catch (e) {}
+  throw new Error("blocked");
+}
+
+// estrae prezzo/mq/indirizzo/zona da una pagina annuncio (multi-portale, best-effort).
+async function estraiDaUrl(url) {
+  const html = await fetchHtml(url);
+  const text = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
   const titolo = (html.match(/<title>([^<]+)</i) || [])[1] || "";
-  const prezzo = (() => {
-    const m = text.match(/([\d.]+)\s*€/) || text.match(/"price"\s*:\s*"?(\d+)/i);
-    return m ? Number(m[1].replace(/\./g, "")) : null;
-  })();
-  const mq = (() => {
-    const m = text.match(/(\d{2,4})\s*m²/) || text.match(/(\d{2,4})\s*m2/i);
-    return m ? Number(m[1]) : null;
-  })();
-  // indirizzo dal titolo: "... in Via X, 12, Zona, Roma ..."
-  const indir = (titolo.match(/in\s+(Via|Viale|Vicolo|Piazza|Largo|Corso|Lungotevere)[^,]*(?:,\s*\d+)?/i) || [])[0] || "";
-  return { titolo: titolo.trim(), prezzo, mq, indirizzo: indir.replace(/^in\s+/i, "").trim() };
+
+  // JSON-LD
+  let ldPrice = null, ldMq = null, ldAddr = "";
+  try {
+    const lds = html.match(/<script[^>]*application\/ld\+json[^>]*>([\s\S]*?)<\/script>/gi) || [];
+    for (const blk of lds) {
+      const jm = blk.match(/>([\s\S]*?)<\/script>/i); if (!jm) continue;
+      let j; try { j = JSON.parse(jm[1]); } catch (e) { continue; }
+      const arr = Array.isArray(j) ? j : (j["@graph"] || [j]);
+      for (const o of arr) {
+        if (!o) continue;
+        const off = o.offers || (o.makesOffer && o.makesOffer[0]);
+        if (off && off.price && !ldPrice) ldPrice = Number(String(off.price).replace(/\D/g, ""));
+        if (o.floorSize && o.floorSize.value && !ldMq) ldMq = Number(String(o.floorSize.value).replace(/\D/g, ""));
+        if (o.address && !ldAddr) ldAddr = typeof o.address === "string" ? o.address : [o.address.streetAddress, o.address.addressLocality].filter(Boolean).join(", ");
+      }
+    }
+  } catch (e) {}
+
+  const prezzo = ldPrice || (() => { const m = text.match(/([\d.]{4,})\s*€/) || text.match(/€\s*([\d.]{4,})/); return m ? Number(m[1].replace(/\./g, "")) : null; })();
+  const mq = ldMq || (() => { const m = text.match(/(\d{2,4})\s*m(?:²|q\b|2\b)/i); return m ? Number(m[1]) : null; })();
+
+  // zona: breadcrumb "Roma • ZONA •" o dizionario nomi-zona nel testo
+  let zona = (text.match(/Roma\s*[•·›>]\s*([^•·›>]{3,40})\s*[•·›>]/i) || [])[1] || "";
+  if (!zona) { const hay = text.toLowerCase(); for (const z of ZONE_NAMES) { if (hay.includes(z.toLowerCase())) { zona = z; break; } } }
+  let indir = ldAddr || (titolo.match(/in\s+(Via|Viale|Vicolo|Piazza|Largo|Corso|Lungotevere)[^,—|]*/i) || [])[0] || "";
+  indir = indir.replace(/^in\s+/i, "").trim();
+  if (zona && indir.toLowerCase().indexOf(zona.toLowerCase()) < 0) indir = (indir ? indir + ", " : "") + zona;
+
+  return { titolo: titolo.trim(), prezzo, mq, indirizzo: indir || zona, zona };
 }
 
 function omiCompatto() {
