@@ -135,15 +135,16 @@ ${omiCompatto()}
 
 Compito:
 1. Dall'indirizzo, scegli la zona OMI più corretta usando i nomi e la tua conoscenza di Roma. Se incerto fra due, dillo e usa la più prudente.
-2. Calcola €/mq annuncio = prezzo/mq; sconto% = (medio_zona - €/mq)/medio_zona (positivo=sotto mercato); rendimento lordo = (loc_med*mq*12)/prezzo. ETICHETTA SEMPRE il rendimento come "LORDO" e aggiungi una riga: "netto stimato ~metà (dopo cedolare 21%, sfitto, spese, tasse)". Non spacciare il lordo per netto.
-3. SEGNALA SEMPRE i bias: villa/casa/mq>300 (OMI è €/mq appartamenti, terreno distorce); seminterrato (vale meno); agenzia (l'utente cerca privati); affittato/nuda proprietà.
-4. Se ci sono FOTO/planimetrie: analizzale — stato reale (ristrutturato/da rifare), luminosità/esposizione, qualità finiture, distribuzione/planimetria (vani passanti, bagni ciechi), red flag (umidità, lavori). Pesa quanto visto nel giudizio.
-5. Verdetto onesto in 3 righe: affare sì/no, sconto reale, cosa verificare.
-Sii sintetico. Non inventare dati mancanti: se mancano, dillo.
+2. NON calcolare tu lo sconto: il sistema lo calcola con la matematica esatta. Tu commenta i valori OMI della zona scelta e il €/mq dell'annuncio.
+3. Rendimento: usa loc_med della zona; ETICHETTA "LORDO" + riga "netto stimato ~metà (dopo cedolare 21%, sfitto, spese, tasse)".
+4. SEGNALA SEMPRE i bias: villa/casa/mq>300 (OMI è €/mq appartamenti, terreno distorce); seminterrato (vale meno); agenzia (l'utente cerca privati); affittato/nuda proprietà.
+5. Se ci sono FOTO/planimetrie: analizzale — stato reale (ristrutturato/da rifare), luminosità/esposizione, qualità finiture, distribuzione (vani passanti, bagni ciechi), red flag (umidità, lavori). Pesa quanto visto.
+6. Verdetto onesto in 3 righe: affare sì/no, cosa verificare.
+Sii sintetico. Non inventare dati mancanti.
 
-IMPORTANTISSIMO: inizia la risposta con UNA riga in questo formato esatto, poi vai a capo e scrivi l'analisi:
-VERDETTO: sconto=<numero con segno, es. -3 o +12> | esito=<AFFARE|IN LINEA|CARO>
-Il numero sconto = (medio_zona - €/mq_annuncio)/medio_zona × 100, arrotondato intero. Negativo = sopra mercato (caro). Questa riga è per il sistema, NON ripeterla nell'analisi.`;
+IMPORTANTISSIMO: inizia la risposta con UNA riga in questo formato esatto, poi vai a capo:
+ZONA: <codice zona OMI scelto, es. C51>
+Questa riga è per il sistema (calcolerà lo sconto), NON ripeterla nell'analisi.`;
 
   const userText = `Annuncio:
 - Titolo/indirizzo: ${dati.indirizzo || dati.titolo || "?"}
@@ -219,15 +220,26 @@ export default async function handler(req, res) {
       return res.status(422).json({ error: "Servono almeno prezzo e mq." });
 
     let opinione = await chiediClaude(dati);
-    // estrai la riga VERDETTO strutturata (per il badge), poi rimuovila dal testo
-    let sconto = null, esito = null;
-    const vm = opinione.match(/VERDETTO:\s*sconto=\s*([+\-−]?\d+)\s*\|\s*esito=\s*(AFFARE|IN LINEA|CARO)/i);
-    if (vm) {
-      sconto = Number(vm[1].replace("−", "-"));
-      esito = vm[2].toUpperCase();
-      opinione = opinione.replace(vm[0], "").replace(/^\s+/, "");
+    // Claude ritorna solo la ZONA; il BACKEND calcola sconto/rendimento (matematica esatta)
+    let zonaCode = null, sconto = null, esito = null, rendimento = null;
+    const zm = opinione.match(/ZONA:\s*([A-Z]\d{1,3})/i);
+    if (zm) {
+      zonaCode = zm[1].toUpperCase();
+      opinione = opinione.replace(zm[0], "").replace(/^\s+/, "");
+      const z = omiData.zone[zonaCode];
+      if (z && dati.prezzo && dati.mq) {
+        const eurMq = dati.prezzo / dati.mq;
+        sconto = Math.round(((z.compr_med - eurMq) / z.compr_med) * 100);
+        esito = sconto >= 8 ? "AFFARE" : (sconto >= -3 ? "IN LINEA" : "CARO");
+        if (z.loc_min && z.loc_max) {
+          const locMed = (z.loc_min + z.loc_max) / 2;
+          rendimento = +(((locMed * dati.mq * 12) / dati.prezzo) * 100).toFixed(1);
+        }
+      }
     }
-    const datiOut = { indirizzo: dati.indirizzo, prezzo: dati.prezzo, mq: dati.mq, zona: dati.zona, nFoto: (dati.foto || []).length, sconto, esito };
+    const datiOut = { indirizzo: dati.indirizzo, prezzo: dati.prezzo, mq: dati.mq,
+      zona: zonaCode, zonaNome: zonaCode && omiData.zone[zonaCode] ? omiData.zone[zonaCode].nome : null,
+      nFoto: (dati.foto || []).length, sconto, esito, rendimento };
     return res.status(200).json({ opinione, dati: datiOut });
   } catch (e) {
     return res.status(500).json({ error: String(e.message || e) });
