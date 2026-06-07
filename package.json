@@ -1,0 +1,7 @@
+{
+  "name": "valuta-casa",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Valuta annuncio immobiliare Roma vs OMI con Claude"
+}

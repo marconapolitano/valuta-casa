@@ -1,0 +1,1695 @@
+{
+"fonte": "Agenzia Entrate OMI - Roma (H501) - II semestre 2025",
+"tipologia": "Abitazioni civili, stato NORMALE",
+"nota": "compr = EUR/mq vendita; loc = EUR/mq/mese affitto. Match zona by nome/indirizzo.",
+"zone": {
+"B1": {
+"nome": "TESTACCIO (PIAZZA S.MARIA LIBERATRICE)",
+"compr_min": 4400,
+"compr_max": 6300,
+"compr_med": 5350,
+"loc_min": 14.0,
+"loc_max": 20.3
+},
+"B12": {
+"nome": "AVENTINO (RIPA-VIA DI S.SABINA)",
+"compr_min": 4800,
+"compr_max": 7000,
+"compr_med": 5900,
+"loc_min": 17.0,
+"loc_max": 25.0
+},
+"B13": {
+"nome": "SANT`ANGELO-CAMPITELLI (VIA DEL PORTICO D`OTTAVIA)",
+"compr_min": 5400,
+"compr_max": 8000,
+"compr_med": 6700,
+"loc_min": 16.0,
+"loc_max": 23.8
+},
+"B14": {
+"nome": "TRASTEVERE (VIA DELLA LUNGARA)",
+"compr_min": 5000,
+"compr_max": 7000,
+"compr_med": 6000,
+"loc_min": 17.0,
+"loc_max": 24.3
+},
+"B15": {
+"nome": "BORGO (VIA DELLA CONCILIAZIONE)",
+"compr_min": 4800,
+"compr_max": 6900,
+"compr_med": 5850,
+"loc_min": 15.5,
+"loc_max": 22.5
+},
+"B17": {
+"nome": "SALLUSTIANO-CASTRO PRETORIO (PIAZZA INDIPENDENZA)",
+"compr_min": 3700,
+"compr_max": 5500,
+"compr_med": 4600,
+"loc_min": 14.3,
+"loc_max": 21.3
+},
+"B18": {
+"nome": "ESQUILINO (PIAZZA VITTORIO)",
+"compr_min": 3400,
+"compr_max": 4700,
+"compr_med": 4050,
+"loc_min": 10.8,
+"loc_max": 15.5
+},
+"B2": {
+"nome": "SAN SABA (PIAZZA G.L. BERNINI)",
+"compr_min": 4800,
+"compr_max": 6800,
+"compr_med": 5800,
+"loc_min": 16.3,
+"loc_max": 22.8
+},
+"B25": {
+"nome": "LUDOVISI (VIA VENETO)",
+"compr_min": 4700,
+"compr_max": 6700,
+"compr_med": 5700,
+"loc_min": 17.3,
+"loc_max": 25.3
+},
+"B29": {
+"nome": "VIMINALE (VIA TORINO)",
+"compr_min": 4600,
+"compr_max": 6300,
+"compr_med": 5450,
+"loc_min": 15.3,
+"loc_max": 21.3
+},
+"B3": {
+"nome": "CELIO (VIA CLAUDIA)",
+"compr_min": 4100,
+"compr_max": 5900,
+"compr_med": 5000,
+"loc_min": 16.3,
+"loc_max": 23.5
+},
+"B31": {
+"nome": "C.STORICO:TRIDENTE(CAMPO MARZIO,COLONNA,PIGNA,TREVI)",
+"compr_min": 7400,
+"compr_max": 9700,
+"compr_med": 8550,
+"loc_min": 19.5,
+"loc_max": 25.8
+},
+"B32": {
+"nome": "C.STORICO:CORSO VITTORIO(PONTE,PARIONE,REGOLA,S.EUSTACHIO)",
+"compr_min": 5600,
+"compr_max": 7800,
+"compr_med": 6700,
+"loc_min": 16.8,
+"loc_max": 24.0
+},
+"B4": {
+"nome": "MONTI (VIA DEI  SERPENTI)",
+"compr_min": 4700,
+"compr_max": 6400,
+"compr_med": 5550,
+"loc_min": 18.0,
+"loc_max": 25.0
+},
+"C1": {
+"nome": "PARIOLI (PIAZZA EUCLIDE)",
+"compr_min": 4800,
+"compr_max": 6600,
+"compr_med": 5700,
+"loc_min": 16.0,
+"loc_max": 22.8
+},
+"C10": {
+"nome": "GARBATELLA (LARGO DELLE SETTE CHIESE)",
+"compr_min": 2800,
+"compr_max": 3900,
+"compr_med": 3350,
+"loc_min": 11.8,
+"loc_max": 16.0
+},
+"C11": {
+"nome": "MARCONI (PIAZZA ENRICO FERMI)",
+"compr_min": 2700,
+"compr_max": 3800,
+"compr_med": 3250,
+"loc_min": 9.5,
+"loc_max": 13.0
+},
+"C12": {
+"nome": "MONTEVERDE VECCHIO (VIA POERIO)",
+"compr_min": 3400,
+"compr_max": 5100,
+"compr_med": 4250,
+"loc_min": 13.8,
+"loc_max": 19.8
+},
+"C13": {
+"nome": "MONTEVERDE NUOVO (VIA DI DONNA OLIMPIA)",
+"compr_min": 2500,
+"compr_max": 3600,
+"compr_med": 3050,
+"loc_min": 10.3,
+"loc_max": 15.0
+},
+"C14": {
+"nome": "AURELIO MONTE DI CRETA (PIAZZA IRNERIO)",
+"compr_min": 2950,
+"compr_max": 4200,
+"compr_med": 3575,
+"loc_min": 11.3,
+"loc_max": 16.3
+},
+"C15": {
+"nome": "AURELIO GREGORIO VII (VIA GREGORIO VII)",
+"compr_min": 3000,
+"compr_max": 4400,
+"compr_med": 3700,
+"loc_min": 13.3,
+"loc_max": 19.5
+},
+"C16": {
+"nome": "CAVALLEGGERI (VIA DELLE FORNACI)",
+"compr_min": 3400,
+"compr_max": 5100,
+"compr_med": 4250,
+"loc_min": 13.5,
+"loc_max": 20.0
+},
+"C17": {
+"nome": "BALDUINA GIOVENALE (VIA DELLE MEDAGLIE D`ORO)",
+"compr_min": 3100,
+"compr_max": 4200,
+"compr_med": 3650,
+"loc_min": 11.5,
+"loc_max": 15.8
+},
+"C18": {
+"nome": "CIPRO (VIA ANGELO EMO)",
+"compr_min": 3800,
+"compr_max": 5100,
+"compr_med": 4450,
+"loc_min": 12.5,
+"loc_max": 17.3
+},
+"C19": {
+"nome": "PONTE MILVIO-FARNESINA (VIA DELLA FARNESINA)",
+"compr_min": 3400,
+"compr_max": 5000,
+"compr_med": 4200,
+"loc_min": 13.8,
+"loc_max": 19.8
+},
+"C2": {
+"nome": "SALARIO (VIA NIZZA)",
+"compr_min": 3800,
+"compr_max": 5300,
+"compr_med": 4550,
+"loc_min": 13.3,
+"loc_max": 18.8
+},
+"C21": {
+"nome": "SALARIO AFRICANO (VIALE LIBIA)",
+"compr_min": 3800,
+"compr_max": 5000,
+"compr_med": 4400,
+"loc_min": 11.5,
+"loc_max": 15.0
+},
+"C22": {
+"nome": "BATTERIA NOMENTANA-LANCIANI (VIA COSTANTINO MAES)",
+"compr_min": 3600,
+"compr_max": 5400,
+"compr_med": 4500,
+"loc_min": 12.0,
+"loc_max": 17.8
+},
+"C24": {
+"nome": "BOLOGNA (VIA LIVORNO)",
+"compr_min": 3600,
+"compr_max": 4900,
+"compr_med": 4250,
+"loc_min": 11.5,
+"loc_max": 15.5
+},
+"C26": {
+"nome": "VILLAGGIO OLIMPICO (VIALE DE COUBERTIN)",
+"compr_min": 3700,
+"compr_max": 5200,
+"compr_med": 4450,
+"loc_min": 12.5,
+"loc_max": 17.3
+},
+"C27": {
+"nome": "PORTA PORTESE (VIA ETTORE ROLLI)",
+"compr_min": 3100,
+"compr_max": 4500,
+"compr_med": 3800,
+"loc_min": 12.0,
+"loc_max": 17.0
+},
+"C29": {
+"nome": "CASAL BERTONE-PORTONACCIO (VIA DI CASAL BERTONE)",
+"compr_min": 2850,
+"compr_max": 4000,
+"compr_med": 3425,
+"loc_min": 10.5,
+"loc_max": 15.3
+},
+"C3": {
+"nome": "PINCIANO (VIA GIOVANNI PAISIELLO)",
+"compr_min": 4400,
+"compr_max": 6400,
+"compr_med": 5400,
+"loc_min": 16.0,
+"loc_max": 23.5
+},
+"C30": {
+"nome": "PIGNETO (PIAZZA DEL PIGNETO)",
+"compr_min": 2950,
+"compr_max": 4100,
+"compr_med": 3525,
+"loc_min": 11.5,
+"loc_max": 16.5
+},
+"C31": {
+"nome": "MARCO POLO (VIALE MARCO POLO)",
+"compr_min": 4000,
+"compr_max": 6000,
+"compr_med": 5000,
+"loc_min": 14.8,
+"loc_max": 21.0
+},
+"C32": {
+"nome": "OSTIENSE (VIA DEL PORTO FLUVIALE)",
+"compr_min": 3200,
+"compr_max": 4500,
+"compr_med": 3850,
+"loc_min": 13.0,
+"loc_max": 18.5
+},
+"C35": {
+"nome": "AURELIO MADONNA DEL RIPOSO (VIA BENTIVOGLIO)",
+"compr_min": 2550,
+"compr_max": 3800,
+"compr_med": 3175,
+"loc_min": 11.3,
+"loc_max": 16.5
+},
+"C38": {
+"nome": "CASILINO MARRANELLA (VIA LABICO)",
+"compr_min": 2500,
+"compr_max": 3500,
+"compr_med": 3000,
+"loc_min": 10.0,
+"loc_max": 14.8
+},
+"C4": {
+"nome": "NOMENTANO TORLONIA (PIAZZA GALENO)",
+"compr_min": 4300,
+"compr_max": 6400,
+"compr_med": 5350,
+"loc_min": 14.5,
+"loc_max": 20.8
+},
+"C40": {
+"nome": "PRATI (VIA COLA DI RIENZO)",
+"compr_min": 4700,
+"compr_max": 6500,
+"compr_med": 5600,
+"loc_min": 13.8,
+"loc_max": 19.0
+},
+"C41": {
+"nome": "DELLA VITTORIA (PIAZZA MAZZINI)",
+"compr_min": 4000,
+"compr_max": 5800,
+"compr_med": 4900,
+"loc_min": 13.8,
+"loc_max": 19.5
+},
+"C42": {
+"nome": "VIGNA CLARA (VIA DI VIGNA STELLUTI)",
+"compr_min": 3400,
+"compr_max": 4900,
+"compr_med": 4150,
+"loc_min": 13.0,
+"loc_max": 18.5
+},
+"C43": {
+"nome": "TRIONFALE IGEA (VIA MARIO FANI)",
+"compr_min": 2700,
+"compr_max": 3900,
+"compr_med": 3300,
+"loc_min": 11.8,
+"loc_max": 17.0
+},
+"C44": {
+"nome": "CAMILLUCCIA (VIA DELLA CAMILLUCCIA)",
+"compr_min": 3600,
+"compr_max": 5300,
+"compr_med": 4450,
+"loc_min": 16.0,
+"loc_max": 23.3
+},
+"C45": {
+"nome": "NOCETTA (VIA DELLA NOCETTA)",
+"compr_min": 2450,
+"compr_max": 3600,
+"compr_med": 3025,
+"loc_min": 9.5,
+"loc_max": 13.5
+},
+"C46": {
+"nome": "SALARIO TRIESTE (CORSO TRIESTE)",
+"compr_min": 4700,
+"compr_max": 6800,
+"compr_med": 5750,
+"loc_min": 13.8,
+"loc_max": 19.8
+},
+"C47": {
+"nome": "BALDUINA BELSITO (PIAZZA MADONNA DEL CENACOLO)",
+"compr_min": 2950,
+"compr_max": 4200,
+"compr_med": 3575,
+"loc_min": 12.0,
+"loc_max": 16.5
+},
+"C48": {
+"nome": "TOR MARANCIA NAVIGATORI (VIA C.T.ODESCALCHI)",
+"compr_min": 2450,
+"compr_max": 3600,
+"compr_med": 3025,
+"loc_min": 10.5,
+"loc_max": 15.5
+},
+"C49": {
+"nome": "FLAMINIO (VIA G. RENI)",
+"compr_min": 4500,
+"compr_max": 6200,
+"compr_med": 5350,
+"loc_min": 13.8,
+"loc_max": 18.8
+},
+"C5": {
+"nome": "SAN LORENZO (VIA DEI SABELLI)",
+"compr_min": 3100,
+"compr_max": 4500,
+"compr_med": 3800,
+"loc_min": 13.8,
+"loc_max": 20.0
+},
+"C50": {
+"nome": "FLAMINIO PORTA DEL POPOLO (PIAZZA DELLA MARINA)",
+"compr_min": 4800,
+"compr_max": 7000,
+"compr_med": 5900,
+"loc_min": 16.8,
+"loc_max": 23.8
+},
+"C51": {
+"nome": "APPIO LATINO (VIA LATINA)",
+"compr_min": 3300,
+"compr_max": 4400,
+"compr_med": 3850,
+"loc_min": 10.5,
+"loc_max": 14.5
+},
+"C52": {
+"nome": "COLLINA FLEMING (VIA BEVAGNA)",
+"compr_min": 3500,
+"compr_max": 4900,
+"compr_med": 4200,
+"loc_min": 13.0,
+"loc_max": 18.8
+},
+"C7": {
+"nome": "APPIO VILLA FIORELLI (VIA TARANTO)",
+"compr_min": 3500,
+"compr_max": 5000,
+"compr_med": 4250,
+"loc_min": 12.3,
+"loc_max": 17.0
+},
+"C8": {
+"nome": "APPIO NOCERA UMBRA (PIAZZA S.MARIA AUSILIATRICE)",
+"compr_min": 3300,
+"compr_max": 4400,
+"compr_med": 3850,
+"loc_min": 9.8,
+"loc_max": 13.8
+},
+"C9": {
+"nome": "APPIO METRONIO (PIAZZA TUSCOLO)",
+"compr_min": 3200,
+"compr_max": 4600,
+"compr_med": 3900,
+"loc_min": 11.8,
+"loc_max": 17.0
+},
+"D1": {
+"nome": "PRENESTINO LABICANO (VIALE PARTENOPE,VIA TEANO)",
+"compr_min": 2450,
+"compr_max": 3500,
+"compr_med": 2975,
+"loc_min": 10.0,
+"loc_max": 14.5
+},
+"D11": {
+"nome": "MONTESACRO (VIALE ADRIATICO)",
+"compr_min": 3100,
+"compr_max": 4400,
+"compr_med": 3750,
+"loc_min": 10.0,
+"loc_max": 14.3
+},
+"D12": {
+"nome": "VALMELAINA-TUFELLO (VIA DELLE ISOLE CURZOLANE)",
+"compr_min": 2850,
+"compr_max": 4000,
+"compr_med": 3425,
+"loc_min": 9.0,
+"loc_max": 12.5
+},
+"D14": {
+"nome": "CENTOCELLE (PIAZZA DEI MIRTI)",
+"compr_min": 2150,
+"compr_max": 3000,
+"compr_med": 2575,
+"loc_min": 10.5,
+"loc_max": 14.8
+},
+"D15": {
+"nome": "ARDEATINO OTTAVO COLLE (VIA DEL SERAFICO)",
+"compr_min": 2950,
+"compr_max": 4300,
+"compr_med": 3625,
+"loc_min": 12.3,
+"loc_max": 17.3
+},
+"D16": {
+"nome": "PIETRALATA TIBURTINO (VIA FILIPPO MEDA)",
+"compr_min": 2700,
+"compr_max": 3900,
+"compr_med": 3300,
+"loc_min": 10.3,
+"loc_max": 14.8
+},
+"D17": {
+"nome": "COLLATINO (VIA DELLA SERENISSIMA)",
+"compr_min": 2250,
+"compr_max": 3200,
+"compr_med": 2725,
+"loc_min": 10.0,
+"loc_max": 13.8
+},
+"D18": {
+"nome": "ALESSANDRINO (VIALE ALESSANDRINO)",
+"compr_min": 2150,
+"compr_max": 3100,
+"compr_med": 2625,
+"loc_min": 10.3,
+"loc_max": 14.5
+},
+"D19": {
+"nome": "CINECITTA` DON BOSCO (PIAZZA S.GIOVANNI BOSCO)",
+"compr_min": 2450,
+"compr_max": 3400,
+"compr_med": 2925,
+"loc_min": 10.0,
+"loc_max": 14.5
+},
+"D2": {
+"nome": "TOR PIGNATTARA (VIA DI TOR PIGNATTARA)",
+"compr_min": 2350,
+"compr_max": 3500,
+"compr_med": 2925,
+"loc_min": 9.8,
+"loc_max": 14.5
+},
+"D20": {
+"nome": "CINECITTA` LAMARO (VIA RAIMONDO SCINTU)",
+"compr_min": 2250,
+"compr_max": 3300,
+"compr_med": 2775,
+"loc_min": 8.3,
+"loc_max": 12.0
+},
+"D21": {
+"nome": "APPIO CLAUDIO (VIALE GIULIO AGRICOLA)",
+"compr_min": 2900,
+"compr_max": 4000,
+"compr_med": 3450,
+"loc_min": 9.8,
+"loc_max": 13.3
+},
+"D22": {
+"nome": "STATUARIO-CAPANNELLE (VIA DEL CALICE)",
+"compr_min": 2300,
+"compr_max": 3200,
+"compr_med": 2750,
+"loc_min": 9.8,
+"loc_max": 13.3
+},
+"D23": {
+"nome": "QUARTO MIGLIO (VIA APPIA PIGNATELLI)",
+"compr_min": 2650,
+"compr_max": 3600,
+"compr_med": 3125,
+"loc_min": 10.3,
+"loc_max": 14.0
+},
+"D24": {
+"nome": "PRIMAVALLE-TORREVECCHIA (VIA DI TORREVECCHIA)",
+"compr_min": 2350,
+"compr_max": 3400,
+"compr_med": 2875,
+"loc_min": 9.8,
+"loc_max": 14.3
+},
+"D26": {
+"nome": "SAN BASILIO (VIA POLLENZA)",
+"compr_min": 2000,
+"compr_max": 2900,
+"compr_med": 2450,
+"loc_min": 8.8,
+"loc_max": 12.5
+},
+"D27": {
+"nome": "TALENTI (VIA UGO OJETTI)",
+"compr_min": 2700,
+"compr_max": 3700,
+"compr_med": 3200,
+"loc_min": 11.0,
+"loc_max": 15.3
+},
+"D28": {
+"nome": "GIULIANO DALMATA (VIA MATTEO BARTOLI)",
+"compr_min": 2650,
+"compr_max": 3800,
+"compr_med": 3225,
+"loc_min": 10.3,
+"loc_max": 14.3
+},
+"D29": {
+"nome": "EUR (VIALE EUROPA)",
+"compr_min": 3300,
+"compr_max": 4900,
+"compr_med": 4100,
+"loc_min": 12.8,
+"loc_max": 18.8
+},
+"D30": {
+"nome": "TOMBA DI NERONE (VIA DI GROTTAROSSA)",
+"compr_min": 1950,
+"compr_max": 2850,
+"compr_med": 2400,
+"loc_min": 10.3,
+"loc_max": 15.0
+},
+"D31": {
+"nome": "CASSIA DUE PONTI (VIA ORIOLO ROMANO)",
+"compr_min": 2300,
+"compr_max": 3400,
+"compr_med": 2850,
+"loc_min": 11.5,
+"loc_max": 16.0
+},
+"D32": {
+"nome": "FONTE MERAVIGLIOSA-ARDEATINO MILLEVOI(VIA STEFANO GRADI)",
+"compr_min": 2700,
+"compr_max": 3600,
+"compr_med": 3150,
+"loc_min": 9.5,
+"loc_max": 13.0
+},
+"D34": {
+"nome": "MONTAGNOLA (VIA PICO DELLA MIRANDOLA)",
+"compr_min": 2950,
+"compr_max": 3900,
+"compr_med": 3425,
+"loc_min": 10.0,
+"loc_max": 14.0
+},
+"D36": {
+"nome": "GROTTA PERFETTA-ROMA 70 (VIALE ERMINIO SPALLA)",
+"compr_min": 2450,
+"compr_max": 3500,
+"compr_med": 2975,
+"loc_min": 8.8,
+"loc_max": 12.0
+},
+"D37": {
+"nome": "APPIA ANTICA (VIA DI TOR CARBONE)",
+"compr_min": 3000,
+"compr_max": 4400,
+"compr_med": 3700,
+"loc_min": 10.8,
+"loc_max": 16.0
+},
+"D38": {
+"nome": "TINTORETTO (VIA BALLARIN)",
+"compr_min": 2450,
+"compr_max": 3400,
+"compr_med": 2925,
+"loc_min": 10.5,
+"loc_max": 15.0
+},
+"D45": {
+"nome": "PINETA SACCHETTI (VIA MATTIA BATTISTINI)",
+"compr_min": 2450,
+"compr_max": 3400,
+"compr_med": 2925,
+"loc_min": 10.8,
+"loc_max": 14.8
+},
+"D46": {
+"nome": "CONCA D`ORO (VIA VAL DI LANZO)",
+"compr_min": 2800,
+"compr_max": 3800,
+"compr_med": 3300,
+"loc_min": 10.0,
+"loc_max": 14.0
+},
+"D47": {
+"nome": "SACCO PASTORE (VIA VAL TROMPIA)",
+"compr_min": 2750,
+"compr_max": 3900,
+"compr_med": 3325,
+"loc_min": 10.5,
+"loc_max": 15.0
+},
+"D48": {
+"nome": "PIETRALATA (VIA DI PIETRALATA)",
+"compr_min": 2300,
+"compr_max": 3400,
+"compr_med": 2850,
+"loc_min": 9.8,
+"loc_max": 14.5
+},
+"D49": {
+"nome": "CASAL BRUCIATO (VIA C. FACCHINETTI)",
+"compr_min": 2400,
+"compr_max": 3300,
+"compr_med": 2850,
+"loc_min": 10.3,
+"loc_max": 14.0
+},
+"D5": {
+"nome": "SAN PAOLO (VIA TULLIO LEVI CIVITA)",
+"compr_min": 2850,
+"compr_max": 4100,
+"compr_med": 3475,
+"loc_min": 10.8,
+"loc_max": 15.8
+},
+"D52": {
+"nome": "CASILINO VILLA DE SANTIS (VIA ROMOLO BALZANI)",
+"compr_min": 2100,
+"compr_max": 3100,
+"compr_med": 2600,
+"loc_min": 8.8,
+"loc_max": 12.8
+},
+"D53": {
+"nome": "QUADRARO (VIA DEI QUINTILI)",
+"compr_min": 2300,
+"compr_max": 3400,
+"compr_med": 2850,
+"loc_min": 9.8,
+"loc_max": 14.3
+},
+"D54": {
+"nome": "ARCO DI TRAVERTINO-TOR FISCALE (VIA DEMETRIADE)",
+"compr_min": 2550,
+"compr_max": 3700,
+"compr_med": 3125,
+"loc_min": 10.5,
+"loc_max": 14.8
+},
+"D57": {
+"nome": "NOMENTANO KANT (VIALE KANT)",
+"compr_min": 2100,
+"compr_max": 3100,
+"compr_med": 2600,
+"loc_min": 8.8,
+"loc_max": 13.0
+},
+"D58": {
+"nome": "PODERE ROSA (VIA DIEGO FABBRI)",
+"compr_min": 2300,
+"compr_max": 3400,
+"compr_med": 2850,
+"loc_min": 8.0,
+"loc_max": 11.8
+},
+"D59": {
+"nome": "CASAL DEI PAZZI (VIA DI CASAL DEI PAZZI)",
+"compr_min": 2050,
+"compr_max": 3000,
+"compr_med": 2525,
+"loc_min": 9.8,
+"loc_max": 14.5
+},
+"D61": {
+"nome": "COLLI ANIENE-VERDEROCCA (VIA GROTTA DI GREGNA)",
+"compr_min": 2550,
+"compr_max": 3700,
+"compr_med": 3125,
+"loc_min": 10.3,
+"loc_max": 14.8
+},
+"D63": {
+"nome": "TOR TRE TESTE (VIA DAVIDE CAMPARI)",
+"compr_min": 2050,
+"compr_max": 3000,
+"compr_med": 2525,
+"loc_min": 9.0,
+"loc_max": 13.5
+},
+"D64": {
+"nome": "TORRE SPACCATA (VIA DEI ROMANISTI)",
+"compr_min": 1950,
+"compr_max": 2700,
+"compr_med": 2325,
+"loc_min": 8.5,
+"loc_max": 12.0
+},
+"D66": {
+"nome": "TORRACCIA DI SAN BASILIO (VIA DONATO MENICHELLA)",
+"compr_min": 1750,
+"compr_max": 2600,
+"compr_med": 2175,
+"loc_min": 7.5,
+"loc_max": 11.0
+},
+"D68": {
+"nome": "CORTINA D`AMPEZZO (VIA CORTINA D`AMPEZZO)",
+"compr_min": 3000,
+"compr_max": 4400,
+"compr_med": 3700,
+"loc_min": 12.8,
+"loc_max": 18.8
+},
+"D69": {
+"nome": "MONTE MARIO ALTO (VIA AUGUSTO CONTI)",
+"compr_min": 2500,
+"compr_max": 3600,
+"compr_med": 3050,
+"loc_min": 11.3,
+"loc_max": 16.3
+},
+"D7": {
+"nome": "PORTUENSE (VIA PROSPERO COLONNA)",
+"compr_min": 2550,
+"compr_max": 3600,
+"compr_med": 3075,
+"loc_min": 10.5,
+"loc_max": 15.0
+},
+"D71": {
+"nome": "NUOVO SALARIO-PRATI FISCALI (VIA MONTE CERVIALTO)",
+"compr_min": 2650,
+"compr_max": 3800,
+"compr_med": 3225,
+"loc_min": 10.3,
+"loc_max": 14.5
+},
+"D73": {
+"nome": "CASETTA MATTEI (VIA DEGLI ADIMARI)",
+"compr_min": 2050,
+"compr_max": 2850,
+"compr_med": 2450,
+"loc_min": 9.3,
+"loc_max": 13.3
+},
+"D74": {
+"nome": "TRULLO (VIA MONTE DELLE CAPRE)",
+"compr_min": 2100,
+"compr_max": 3000,
+"compr_med": 2550,
+"loc_min": 8.3,
+"loc_max": 12.3
+},
+"D75": {
+"nome": "BOSCO DEGLI ARVALI (VIA DI GENEROSA)",
+"compr_min": 2350,
+"compr_max": 3300,
+"compr_med": 2825,
+"loc_min": 10.0,
+"loc_max": 14.0
+},
+"D76": {
+"nome": "PISANA-BRAVETTA (VIA DEI GONZAGA)",
+"compr_min": 2250,
+"compr_max": 3200,
+"compr_med": 2725,
+"loc_min": 10.3,
+"loc_max": 14.5
+},
+"D77": {
+"nome": "AURELIO VAL CANNUTA (VIA DI VAL CANNUTA)",
+"compr_min": 2950,
+"compr_max": 4100,
+"compr_med": 3525,
+"loc_min": 12.0,
+"loc_max": 16.8
+},
+"D78": {
+"nome": "FERRATELLA (VIALE CESARE PAVESE)",
+"compr_min": 2600,
+"compr_max": 3900,
+"compr_med": 3250,
+"loc_min": 9.8,
+"loc_max": 14.5
+},
+"D79": {
+"nome": "TORRINO SUD (VIA DEL FIUME GIALLO)",
+"compr_min": 2700,
+"compr_max": 3500,
+"compr_med": 3100,
+"loc_min": 11.0,
+"loc_max": 14.5
+},
+"D8": {
+"nome": "MAGLIANA (VIA DELL`IMPRUNETA)",
+"compr_min": 2100,
+"compr_max": 2900,
+"compr_med": 2500,
+"loc_min": 9.5,
+"loc_max": 13.5
+},
+"D80": {
+"nome": "TORRINO NORD-CITTA` D`EUROPA (VIA DELLE COSTELLAZIONI)",
+"compr_min": 3400,
+"compr_max": 4800,
+"compr_med": 4100,
+"loc_min": 11.3,
+"loc_max": 16.8
+},
+"D81": {
+"nome": "DECIMA (VIALE CAMILLO SABATINI)",
+"compr_min": 2000,
+"compr_max": 2950,
+"compr_med": 2475,
+"loc_min": 8.3,
+"loc_max": 12.3
+},
+"D82": {
+"nome": "MOSTACCIANO (VIALE BEATA VERGINE DEL CARMELO)",
+"compr_min": 2550,
+"compr_max": 3500,
+"compr_med": 3025,
+"loc_min": 9.8,
+"loc_max": 14.0
+},
+"D9": {
+"nome": "COLLI PORTUENSI (PIAZZALE EUGENIO MORELLI)",
+"compr_min": 2750,
+"compr_max": 3900,
+"compr_med": 3325,
+"loc_min": 11.5,
+"loc_max": 16.5
+},
+"E10": {
+"nome": "MORENA-CASAL MORENA (VIA CASAL MORENA)",
+"compr_min": 1850,
+"compr_max": 2500,
+"compr_med": 2175,
+"loc_min": 9.3,
+"loc_max": 12.5
+},
+"E101": {
+"nome": "CASAL MONASTERO (VIA BELMONTE IN SABINA)",
+"compr_min": 1750,
+"compr_max": 2600,
+"compr_med": 2175,
+"loc_min": 7.5,
+"loc_max": 11.0
+},
+"E105": {
+"nome": "BOCCEA QUARTACCIO (VIA ANDERSEN)",
+"compr_min": 2300,
+"compr_max": 3200,
+"compr_med": 2750,
+"loc_min": 9.8,
+"loc_max": 14.0
+},
+"E11": {
+"nome": "GIARDINETTI (VIA MARCANTONIO RAIMONDI)",
+"compr_min": 1750,
+"compr_max": 2400,
+"compr_med": 2075,
+"loc_min": 7.8,
+"loc_max": 11.0
+},
+"E113": {
+"nome": "CASALOTTI SELVA CANDIDA (VIA DI SELVA NERA)",
+"compr_min": 2000,
+"compr_max": 2900,
+"compr_med": 2450,
+"loc_min": 9.0,
+"loc_max": 13.0
+},
+"E114": {
+"nome": "OTTAVIA LUCCHINA (VIA DELLA LUCCHINA)",
+"compr_min": 1900,
+"compr_max": 2650,
+"compr_med": 2275,
+"loc_min": 9.5,
+"loc_max": 13.3
+},
+"E115": {
+"nome": "SETTECAMINI (VIA RUBELLIA)",
+"compr_min": 1700,
+"compr_max": 2400,
+"compr_med": 2050,
+"loc_min": 8.0,
+"loc_max": 11.3
+},
+"E12": {
+"nome": "CASALOTTI (PIAZZA ORMEA)",
+"compr_min": 2000,
+"compr_max": 2950,
+"compr_med": 2475,
+"loc_min": 9.3,
+"loc_max": 13.3
+},
+"E123": {
+"nome": "LA CINQUINA-BUFALOTTA (VIA FEO BELCARI)",
+"compr_min": 2050,
+"compr_max": 2950,
+"compr_med": 2500,
+"loc_min": 9.3,
+"loc_max": 13.3
+},
+"E125": {
+"nome": "CASALOTTI  PANTAN MONASTERO (VIA DI CASAL SELCE)",
+"compr_min": 1700,
+"compr_max": 2500,
+"compr_med": 2100,
+"loc_min": 8.5,
+"loc_max": 12.3
+},
+"E127": {
+"nome": "CASILINO DUE TORRI-VILLAVERDE (VIA DEGAS)",
+"compr_min": 1500,
+"compr_max": 2000,
+"compr_med": 1750,
+"loc_min": 6.5,
+"loc_max": 9.0
+},
+"E128": {
+"nome": "VERMICINO (VIA DEL CASALE ANTONIONI)",
+"compr_min": 1550,
+"compr_max": 2300,
+"compr_med": 1925,
+"loc_min": 8.0,
+"loc_max": 12.0
+},
+"E13": {
+"nome": "FONTE OSTIENSE (VIALE IGNAZIO SILONE)",
+"compr_min": 1850,
+"compr_max": 2650,
+"compr_med": 2250,
+"loc_min": 7.5,
+"loc_max": 10.8
+},
+"E132": {
+"nome": "LA RUSTICA (VIA ACHILLE VERTUNNI)",
+"compr_min": 1700,
+"compr_max": 2250,
+"compr_med": 1975,
+"loc_min": 8.3,
+"loc_max": 11.8
+},
+"E138": {
+"nome": "TOR BELLA MONACA PEEP (VIA DELL`ARCHEOLOGIA)",
+"compr_min": 1100,
+"compr_max": 1650,
+"compr_med": 1375,
+"loc_min": 6.8,
+"loc_max": 10.0
+},
+"E139": {
+"nome": "TOR BELLA MONACA-VALLE FIORITA-DUE LEONI (VIA ACQUARONI)",
+"compr_min": 1450,
+"compr_max": 2000,
+"compr_med": 1725,
+"loc_min": 7.0,
+"loc_max": 10.5
+},
+"E14": {
+"nome": "TOR SAPIENZA-ZONA INDUSTRIALE VIA DELL`OMO (VIALE GIORGIO DE CHIRICO)",
+"compr_min": 1950,
+"compr_max": 2750,
+"compr_med": 2350,
+"loc_min": 10.0,
+"loc_max": 14.3
+},
+"E140": {
+"nome": "TORRENOVA (VIA DELLA TENUTA DI TORRENOVA)",
+"compr_min": 1600,
+"compr_max": 2350,
+"compr_med": 1975,
+"loc_min": 7.8,
+"loc_max": 11.3
+},
+"E141": {
+"nome": "CINECITTA` EST (VIALE ANTONIO CIAMARRA)",
+"compr_min": 1950,
+"compr_max": 2600,
+"compr_med": 2275,
+"loc_min": 7.0,
+"loc_max": 10.0
+},
+"E143": {
+"nome": "TOR VERGATA UNIVERSITA`-PASSO LOMBARDO (VIA DI PASSO LOMBARDO)",
+"compr_min": 1800,
+"compr_max": 2650,
+"compr_med": 2225,
+"loc_min": 8.0,
+"loc_max": 11.8
+},
+"E144": {
+"nome": "ROMANINA (VIA SCIMONELLI)",
+"compr_min": 1700,
+"compr_max": 2500,
+"compr_med": 2100,
+"loc_min": 7.8,
+"loc_max": 11.3
+},
+"E145": {
+"nome": "ANAGNINA VALLE MARCIANA-FOSSO SANT`ANDREA (VIA DEL FOSSO DI SANT`ANDREA)",
+"compr_min": 1900,
+"compr_max": 2750,
+"compr_med": 2325,
+"loc_min": 10.0,
+"loc_max": 14.3
+},
+"E146": {
+"nome": "MORENA GASPERINA (VIA CROPANI)",
+"compr_min": 1950,
+"compr_max": 2850,
+"compr_med": 2400,
+"loc_min": 8.8,
+"loc_max": 12.8
+},
+"E147": {
+"nome": "GREGNA SANT`ANDREA (VIA PIETRO CROSTAROSA)",
+"compr_min": 1600,
+"compr_max": 2300,
+"compr_med": 1950,
+"loc_min": 7.8,
+"loc_max": 11.3
+},
+"E15": {
+"nome": "TORRE ANGELA (VIA DEL TORRACCIO DI TORRENOVA)",
+"compr_min": 1450,
+"compr_max": 2100,
+"compr_med": 1775,
+"loc_min": 7.5,
+"loc_max": 10.8
+},
+"E156": {
+"nome": "PISANA-PONTE GALERIA (VIA ETTORE SCANDALE,VIA USINI)",
+"compr_min": 1850,
+"compr_max": 2600,
+"compr_med": 2225,
+"loc_min": 7.0,
+"loc_max": 10.3
+},
+"E157": {
+"nome": "CASTEL DI LEVA (VIA DI TOR CHIESACCIA)",
+"compr_min": 2200,
+"compr_max": 3100,
+"compr_med": 2650,
+"loc_min": 9.0,
+"loc_max": 12.8
+},
+"E158": {
+"nome": "DIVINO AMORE-FALCOGNANA (VIA DEI CASALI DI PORTA MEDAGLIA)",
+"compr_min": 1550,
+"compr_max": 2300,
+"compr_med": 1925,
+"loc_min": 6.3,
+"loc_max": 9.3
+},
+"E159": {
+"nome": "LA STORTA CASALE SAN NICOLA (VIA G.B.PARAVIA)",
+"compr_min": 1650,
+"compr_max": 2100,
+"compr_med": 1875,
+"loc_min": 6.3,
+"loc_max": 8.8
+},
+"E16": {
+"nome": "CASTEL GIUBILEO-BEL POGGIO (VIA CASTORANO)",
+"compr_min": 1400,
+"compr_max": 2000,
+"compr_med": 1700,
+"loc_min": 7.3,
+"loc_max": 10.5
+},
+"E160": {
+"nome": "TRAGLIATELLA (VIA PIOSSASCO)",
+"compr_min": 1000,
+"compr_max": 1400,
+"compr_med": 1200,
+"loc_min": 5.5,
+"loc_max": 7.8
+},
+"E162": {
+"nome": "VALLE MURICANA-MONTE PIETRA PERTUSA (VIA DI VALLE MURICANA)",
+"compr_min": 1700,
+"compr_max": 2400,
+"compr_med": 2050,
+"loc_min": 8.3,
+"loc_max": 12.3
+},
+"E165": {
+"nome": "LUNGHEZZA-CASTELVERDE-FOSSO SAN GIULIANO (VIA DEL FOSSO DELL`OSA)",
+"compr_min": 1350,
+"compr_max": 1900,
+"compr_med": 1625,
+"loc_min": 6.5,
+"loc_max": 9.3
+},
+"E166": {
+"nome": "CORCOLLE-SAN VITTORINO (VIA SANT`ELPIDIO AL MARE)",
+"compr_min": 1250,
+"compr_max": 1850,
+"compr_med": 1550,
+"loc_min": 6.0,
+"loc_max": 8.8
+},
+"E168": {
+"nome": "PRENESTINO COLLE DEL SOLE-LAGO REGILLO (VIA OLLOLAI)",
+"compr_min": 1350,
+"compr_max": 2000,
+"compr_med": 1675,
+"loc_min": 6.3,
+"loc_max": 9.3
+},
+"E17": {
+"nome": "OTTAVIA PALMAROLA (VIA DELLA PALMAROLA)",
+"compr_min": 1850,
+"compr_max": 2700,
+"compr_med": 2275,
+"loc_min": 8.0,
+"loc_max": 12.0
+},
+"E170": {
+"nome": "COLLE MATTIA-FONTANA CANDIDA (VIA DEL CASALE CIMINELLI)",
+"compr_min": 1050,
+"compr_max": 1500,
+"compr_med": 1275,
+"loc_min": 6.5,
+"loc_max": 9.3
+},
+"E171": {
+"nome": "CASALOTTI VALLE SANTA (VIA VENDRAMINI)",
+"compr_min": 1750,
+"compr_max": 2450,
+"compr_med": 2100,
+"loc_min": 6.8,
+"loc_max": 9.8
+},
+"E179": {
+"nome": "ROMANINA TOR VERGATA (VIA BERNARDINO ALIMENA)",
+"compr_min": 2100,
+"compr_max": 2950,
+"compr_med": 2525,
+"loc_min": 7.3,
+"loc_max": 10.0
+},
+"E18": {
+"nome": "GROTTAROSSA-SAXA RUBRA (VIA CARLO EMERY)",
+"compr_min": 3300,
+"compr_max": 4700,
+"compr_med": 4000,
+"loc_min": 11.8,
+"loc_max": 16.5
+},
+"E181": {
+"nome": "PARCO DI VEIO PRATO DELLA CORTE (VIA FORMELLESE)",
+"compr_min": 1450,
+"compr_max": 2150,
+"compr_med": 1800,
+"loc_min": 6.8,
+"loc_max": 10.0
+},
+"E184": {
+"nome": "MEZZOCAMMINO (VIA DI MEZZOCAMMINO)",
+"compr_min": 3100,
+"compr_max": 4100,
+"compr_med": 3600,
+"loc_min": 11.3,
+"loc_max": 15.0
+},
+"E185": {
+"nome": "FONTE LAURENTINA (VIA EDOARDO AMALDI)",
+"compr_min": 2700,
+"compr_max": 3500,
+"compr_med": 3100,
+"loc_min": 12.0,
+"loc_max": 16.0
+},
+"E186": {
+"nome": "OSTIA LEVANTE",
+"compr_min": 1950,
+"compr_max": 2600,
+"compr_med": 2275,
+"loc_min": 9.8,
+"loc_max": 13.3
+},
+"E187": {
+"nome": "OSTIA PONENTE",
+"compr_min": 1850,
+"compr_max": 2400,
+"compr_med": 2125,
+"loc_min": 9.0,
+"loc_max": 12.0
+},
+"E188": {
+"nome": "VALLERANO ( VIA DI VALLERANO) - PAPILLO ( VIA ALBERTO MORAVIA)",
+"compr_min": 2800,
+"compr_max": 3800,
+"compr_med": 3300,
+"loc_min": 11.3,
+"loc_max": 15.0
+},
+"E19": {
+"nome": "BORGHESIANA-FINOCCHIO (VIA DI BORGHESIANA)",
+"compr_min": 1450,
+"compr_max": 2150,
+"compr_med": 1800,
+"loc_min": 7.3,
+"loc_max": 10.5
+},
+"E21": {
+"nome": "SPINACETO-TOR DE` CENCI (VIALE DEGLI EROI DI CEFALONIA)",
+"compr_min": 1750,
+"compr_max": 2300,
+"compr_med": 2025,
+"loc_min": 8.8,
+"loc_max": 11.8
+},
+"E22": {
+"nome": "ACQUA VERGINE(PRATO FIORITO-COLLE PRENESTINO,MONFORTANI)",
+"compr_min": 1300,
+"compr_max": 1900,
+"compr_med": 1600,
+"loc_min": 6.5,
+"loc_max": 9.5
+},
+"E23": {
+"nome": "SETTECAMINI CASE ROSSE (VIA DELLE CASE ROSSE)",
+"compr_min": 1400,
+"compr_max": 2000,
+"compr_med": 1700,
+"loc_min": 7.8,
+"loc_max": 10.8
+},
+"E24": {
+"nome": "LA GIUSTINIANA (VIA ITALO PICCAGLI)",
+"compr_min": 1900,
+"compr_max": 2650,
+"compr_med": 2275,
+"loc_min": 9.5,
+"loc_max": 13.3
+},
+"E25": {
+"nome": "PRIMA PORTA (VIA DELLA VILLA DI LIVIA)",
+"compr_min": 1500,
+"compr_max": 2250,
+"compr_med": 1875,
+"loc_min": 7.8,
+"loc_max": 11.3
+},
+"E26": {
+"nome": "LA STORTA (VIA DELLA TORRE DI SPIZZICHINO)",
+"compr_min": 1950,
+"compr_max": 2650,
+"compr_med": 2300,
+"loc_min": 7.8,
+"loc_max": 11.0
+},
+"E27": {
+"nome": "LABARO (VIA GEMONA DEL FRIULI)",
+"compr_min": 1750,
+"compr_max": 2350,
+"compr_med": 2050,
+"loc_min": 8.5,
+"loc_max": 12.0
+},
+"E28": {
+"nome": "TORRE GAIA-VILLAGGIO BREDA (VIA DI GROTTE CELONI)",
+"compr_min": 1850,
+"compr_max": 2700,
+"compr_med": 2275,
+"loc_min": 7.0,
+"loc_max": 10.5
+},
+"E3": {
+"nome": "TORRE MAURA (VIA WALTER TOBAGI)",
+"compr_min": 1800,
+"compr_max": 2650,
+"compr_med": 2225,
+"loc_min": 8.8,
+"loc_max": 12.5
+},
+"E30": {
+"nome": "CASAL PALOCCO (VIALE GORGIA DI LEONTINI)",
+"compr_min": 2500,
+"compr_max": 3300,
+"compr_med": 2900,
+"loc_min": 9.5,
+"loc_max": 13.0
+},
+"E31": {
+"nome": "ACILIA NORD (VIA DEI MONTI DI SAN PAOLO)",
+"compr_min": 1750,
+"compr_max": 2350,
+"compr_med": 2050,
+"loc_min": 8.0,
+"loc_max": 11.0
+},
+"E32": {
+"nome": "OSTIA ANTICA (VIA DEL CASTELLO)",
+"compr_min": 1600,
+"compr_max": 2350,
+"compr_med": 1975,
+"loc_min": 9.0,
+"loc_max": 13.3
+},
+"E33": {
+"nome": "ACILIA SUD (VIA DI PRATO CORNELIO)",
+"compr_min": 1950,
+"compr_max": 2550,
+"compr_med": 2250,
+"loc_min": 10.0,
+"loc_max": 13.3
+},
+"E38": {
+"nome": "ARDEATINA SELVOTTA-SPREGAMORE (VIA DEL FOSSO DELLA SOLFARATA)",
+"compr_min": 1300,
+"compr_max": 1950,
+"compr_med": 1625,
+"loc_min": 7.0,
+"loc_max": 10.5
+},
+"E39": {
+"nome": "CASTEL DI DECIMA-CASTEL ROMANO (VIA NAZZARENO STRAMPELLI)",
+"compr_min": 1600,
+"compr_max": 2300,
+"compr_med": 1950,
+"loc_min": 6.8,
+"loc_max": 9.8
+},
+"E40": {
+"nome": "COLLE SALARIO (VIA MONTE GIBERTO)",
+"compr_min": 2900,
+"compr_max": 3800,
+"compr_med": 3350,
+"loc_min": 11.0,
+"loc_max": 14.8
+},
+"E41": {
+"nome": "FIDENE-VILLA SPADA (VIA RADICOFANI)",
+"compr_min": 1900,
+"compr_max": 2650,
+"compr_med": 2275,
+"loc_min": 8.3,
+"loc_max": 11.5
+},
+"E42": {
+"nome": "SERPENTARA (VIALE LINA CAVALIERI)",
+"compr_min": 2200,
+"compr_max": 3000,
+"compr_med": 2600,
+"loc_min": 8.8,
+"loc_max": 12.3
+},
+"E47": {
+"nome": "VIGNE NUOVE-PORTA DI ROMA (VIA DELLE VIGNE NUOVE)",
+"compr_min": 2850,
+"compr_max": 3700,
+"compr_med": 3275,
+"loc_min": 11.5,
+"loc_max": 15.5
+},
+"E49": {
+"nome": "OSTERIA DEL CURATO-LUCREZIA ROMANA (VIA DELLE CAPANNELLE)",
+"compr_min": 2250,
+"compr_max": 3200,
+"compr_med": 2725,
+"loc_min": 8.8,
+"loc_max": 12.3
+},
+"E50": {
+"nome": "SETTEBAGNI (VIA S.ANTONIO DA PADOVA)",
+"compr_min": 1800,
+"compr_max": 2650,
+"compr_med": 2225,
+"loc_min": 7.8,
+"loc_max": 11.3
+},
+"E51": {
+"nome": "CASAL BOCCONE BUFALOTTA (VIA PAOLO MONELLI)",
+"compr_min": 3400,
+"compr_max": 4700,
+"compr_med": 4050,
+"loc_min": 12.8,
+"loc_max": 18.0
+},
+"E53": {
+"nome": "PONTE DI NONA (VIA LUIGI GASTINELLI)",
+"compr_min": 1650,
+"compr_max": 2400,
+"compr_med": 2025,
+"loc_min": 8.3,
+"loc_max": 11.5
+},
+"E62": {
+"nome": "TRIGORIA (VIA DI TRIGORIA)",
+"compr_min": 2050,
+"compr_max": 2800,
+"compr_med": 2425,
+"loc_min": 11.3,
+"loc_max": 15.8
+},
+"E64": {
+"nome": "SANTA PALOMBA-PIAN SAVELLI (VIA DELLA STAZIONE DI PAVONA)",
+"compr_min": 1150,
+"compr_max": 1700,
+"compr_med": 1425,
+"loc_min": 6.0,
+"loc_max": 8.8
+},
+"E65": {
+"nome": "FIORANELLO (VIA DI FIORANELLO)",
+"compr_min": 1600,
+"compr_max": 2350,
+"compr_med": 1975,
+"loc_min": 7.3,
+"loc_max": 10.5
+},
+"E7": {
+"nome": "TORRESINA-MONTE DEL MARMO (VIA DEL PODERE DI SAN GIUSTO)",
+"compr_min": 2000,
+"compr_max": 2850,
+"compr_med": 2425,
+"loc_min": 7.5,
+"loc_max": 11.0
+},
+"E71": {
+"nome": "PIANA DEL SOLE - FIERA DI ROMA (VIA CRISTOFORO SABBADINO)",
+"compr_min": 1900,
+"compr_max": 2750,
+"compr_med": 2325,
+"loc_min": 7.8,
+"loc_max": 11.3
+},
+"E72": {
+"nome": "CASTEL DI GUIDO-MALAGROTTA (VIA DI CASTEL DI GUIDO)",
+"compr_min": 1600,
+"compr_max": 2350,
+"compr_med": 1975,
+"loc_min": 7.5,
+"loc_max": 10.5
+},
+"E73": {
+"nome": "MASSIMINA-CASAL LUMBROSO (VIA MASSIMILLA)",
+"compr_min": 1750,
+"compr_max": 2600,
+"compr_med": 2175,
+"loc_min": 8.3,
+"loc_max": 12.0
+},
+"E75": {
+"nome": "CECCHIGNOLA-TOR PAGNOTTA (VIA DELLA CECCHIGNOLA)",
+"compr_min": 1900,
+"compr_max": 2800,
+"compr_med": 2350,
+"loc_min": 9.5,
+"loc_max": 14.0
+},
+"E77": {
+"nome": "CESANO (VIA DI BACCANELLO)",
+"compr_min": 1200,
+"compr_max": 1750,
+"compr_med": 1475,
+"loc_min": 7.3,
+"loc_max": 10.3
+},
+"E78": {
+"nome": "ISOLA FARNESE (VIA CERQUETTA)",
+"compr_min": 1550,
+"compr_max": 2250,
+"compr_med": 1900,
+"loc_min": 7.3,
+"loc_max": 10.8
+},
+"E79": {
+"nome": "OSTERIA NUOVA-CASACCIA (VIA ANGUILLARESE)",
+"compr_min": 950,
+"compr_max": 1400,
+"compr_med": 1175,
+"loc_min": 5.8,
+"loc_max": 8.5
+},
+"E8": {
+"nome": "MONTESPACCATO (VIA CORNELIA)",
+"compr_min": 1700,
+"compr_max": 2500,
+"compr_med": 2100,
+"loc_min": 8.5,
+"loc_max": 12.0
+},
+"E81": {
+"nome": "VITINIA (VIA SARSINA)",
+"compr_min": 1750,
+"compr_max": 2450,
+"compr_med": 2100,
+"loc_min": 8.8,
+"loc_max": 12.5
+},
+"E83": {
+"nome": "ACILIA NUOVA-MADONNETTA (VIA BEPI ROMAGNONI)",
+"compr_min": 1950,
+"compr_max": 2750,
+"compr_med": 2350,
+"loc_min": 9.0,
+"loc_max": 12.5
+},
+"E84": {
+"nome": "AXA (VIA ARISTOFANE)",
+"compr_min": 1750,
+"compr_max": 2550,
+"compr_med": 2150,
+"loc_min": 7.5,
+"loc_max": 11.0
+},
+"E87": {
+"nome": "DRAGONCELLO (VIALE A.RUSPOLI)",
+"compr_min": 1500,
+"compr_max": 1950,
+"compr_med": 1725,
+"loc_min": 7.0,
+"loc_max": 9.5
+},
+"E88": {
+"nome": "DRAGONA (VIA DI DRAGONE)",
+"compr_min": 1750,
+"compr_max": 2400,
+"compr_med": 2075,
+"loc_min": 8.3,
+"loc_max": 11.5
+},
+"E89": {
+"nome": "TIBERINA-MALBORGHETTO (VIA MALBORGHETTO-TIBERINA KM 7)",
+"compr_min": 1150,
+"compr_max": 1700,
+"compr_med": 1425,
+"loc_min": 6.5,
+"loc_max": 9.5
+},
+"E9": {
+"nome": "TOR CERVARA-PONTE MAMMOLO (VIA VANNINA)",
+"compr_min": 1750,
+"compr_max": 2600,
+"compr_med": 2175,
+"loc_min": 6.8,
+"loc_max": 9.8
+},
+"E92": {
+"nome": "STAGNI DI OSTIA-LONGARINA (VIA FEDERICO BAZZINI)",
+"compr_min": 1650,
+"compr_max": 2350,
+"compr_med": 2000,
+"loc_min": 7.5,
+"loc_max": 10.5
+},
+"E94": {
+"nome": "INFERNETTO (VIA ERMANNO WOLF FERRARI)",
+"compr_min": 2100,
+"compr_max": 3100,
+"compr_med": 2600,
+"loc_min": 9.5,
+"loc_max": 14.0
+},
+"E96": {
+"nome": "SANTA CORNELIA (VIA DEL FOSSO DI MONTE OLIVIERO)",
+"compr_min": 1800,
+"compr_max": 2600,
+"compr_med": 2200,
+"loc_min": 8.0,
+"loc_max": 11.5
+},
+"E97": {
+"nome": "OLGIATA (LARGO DELL`OLGIATA)",
+"compr_min": 1400,
+"compr_max": 2050,
+"compr_med": 1725,
+"loc_min": 7.0,
+"loc_max": 10.0
+},
+"E98": {
+"nome": "MURATELLA (VIALE GAETANO ARTURO CROCCO)",
+"compr_min": 2150,
+"compr_max": 2950,
+"compr_med": 2550,
+"loc_min": 9.8,
+"loc_max": 13.5
+},
+"R40": {
+"nome": "SANTA MARIA DI GALERIA (VIA DI SANTA MARIA DI GALERIA)",
+"compr_min": 950,
+"compr_max": 1400,
+"compr_med": 1175,
+"loc_min": 5.0,
+"loc_max": 7.3
+},
+"R7": {
+"nome": "RISERVA DELLA MARCIGLIANA (VIA DI SANTA COLOMBA)",
+"compr_min": 1500,
+"compr_max": 2250,
+"compr_med": 1875,
+"loc_min": 6.0,
+"loc_max": 8.8
+},
+"R9": {
+"nome": "AGRO ROMANO OVEST (VIA SANTA MARIA DI GALERIA)",
+"compr_min": 1200,
+"compr_max": 1700,
+"compr_med": 1450,
+"loc_min": 5.8,
+"loc_max": 8.3
+}
+}
+}
