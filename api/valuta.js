@@ -5,11 +5,15 @@
 //
 // Secret richiesti (Vercel env): ANTHROPIC_API_KEY, APP_PASSWORD
 // La API key NON è mai nel frontend.
+// Implementazione divisa in api/_lib/* — qui resta solo l'orchestrazione HTTP.
 
 import omiData from "../data/omi_roma_compatto.json" with { type: "json" };
+import { deriveZoneNames } from "./_lib/zones.js";
+import { estraiDaUrl, isPlanimetria } from "./_lib/extract.js";
+import { chiediClaude } from "./_lib/claude.js";
+import { calcolaValutazione } from "./_lib/valuation.js";
 
-const MODEL = "claude-haiku-4-5-20251001"; // economico, sufficiente
-const MAX_TOKENS = 900;
+const ZONE_NAMES = deriveZoneNames(omiData);
 
 // rate limit in-memory leggero (per istanza). Per "pochi fidati" basta.
 const hits = new Map();
@@ -21,188 +25,6 @@ function rateOk(ip) {
   const n = (hits.get(key) || 0) + 1;
   hits.set(key, n);
   return n <= LIMIT_PER_DAY;
-}
-
-const BROWSER_HEADERS = {
-  "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-  "Accept-Language": "it-IT,it;q=0.9",
-  "Referer": "https://www.google.com/",
-};
-
-// nomi-zona OMI per scansione testo (universale, ogni portale)
-const ZONE_NAMES = (() => {
-  const set = new Set();
-  for (const e of Object.values(omiData.zone)) {
-    let n = e.nome.split("(")[0].replace(/^C\.STORICO:/i, "").trim();
-    n.split(/[-\/]/).forEach((p) => { p = p.trim(); if (p.length >= 4 && !/^ROMA$/i.test(p) && !/^ZONA /i.test(p)) set.add(p); });
-  }
-  return [...set].sort((a, b) => b.length - a.length);
-})();
-
-async function fetchHtml(url) {
-  // 1) ScraperAPI (se configurato): proxy residenziali + JS render → supera DataDome
-  if (process.env.SCRAPERAPI_KEY) {
-    try {
-      const api = "https://api.scraperapi.com/?api_key=" + process.env.SCRAPERAPI_KEY +
-        "&render=true&country_code=it&url=" + encodeURIComponent(url);
-      const r = await fetch(api, { signal: AbortSignal.timeout(55000) });
-      if (r.ok) { const h = await r.text(); if (h.length > 2000) return h; }
-    } catch (e) {}
-  }
-  // 2) diretto con header browser (portali deboli)
-  try {
-    const r = await fetch(url, { headers: BROWSER_HEADERS, redirect: "follow" });
-    if (r.ok) { const h = await r.text(); if (h.length > 2000) return h; }
-  } catch (e) {}
-  // 3) reader proxy gratuito (best-effort)
-  try {
-    const r = await fetch("https://r.jina.ai/" + url, { headers: { "User-Agent": BROWSER_HEADERS["User-Agent"] } });
-    if (r.ok) { const h = await r.text(); if (h.length > 800 && !/403|CAPTCHA/i.test(h.slice(0, 300))) return h; }
-  } catch (e) {}
-  throw new Error("blocked");
-}
-
-// rileva se un URL è (probabilmente) una planimetria
-const isPlanimetria = (u) => /plan(?:imetr)?|floor[\-_]?plan|grundriss|\/map\b/i.test(u);
-
-// estrae URL foto+planimetrie dall'HTML. Ritorna {url, plan} ordinati: planimetrie prima.
-function estraiFoto(html, max) {
-  const seen = new Set();
-  const out = [];
-  const add = (u) => {
-    if (!u) return;
-    u = u.replace(/&amp;/g, "&");
-    if (seen.has(u)) return;
-    if (/logo|icon|avatar|placeholder|sprite|banner/i.test(u) && !isPlanimetria(u)) return;
-    seen.add(u);
-    out.push({ url: u, plan: isPlanimetria(u) });
-  };
-  const og = html.match(/<meta[^>]+property="og:image"[^>]+content="([^"]+)"/i);
-  if (og) add(og[1]);
-  // src, data-src, srcset, lazy attrs: prendi tutti gli URL immagine grezzi
-  const imgs = html.match(/https?:\/\/[^"' )]+\.(?:jpg|jpeg|webp|png)(?:\?[^"' )]*)?/gi) || [];
-  for (const u of imgs) add(u);
-  // planimetrie prima (analisi layout), poi foto; cap a max
-  out.sort((a, b) => (b.plan ? 1 : 0) - (a.plan ? 1 : 0));
-  return out.slice(0, max || 5);
-}
-
-// estrae prezzo/mq/indirizzo/zona da una pagina annuncio (multi-portale, best-effort).
-async function estraiDaUrl(url) {
-  const html = await fetchHtml(url);
-  const text = html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
-  const titolo = (html.match(/<title>([^<]+)</i) || [])[1] || "";
-
-  // JSON-LD
-  let ldPrice = null, ldMq = null, ldAddr = "";
-  try {
-    const lds = html.match(/<script[^>]*application\/ld\+json[^>]*>([\s\S]*?)<\/script>/gi) || [];
-    for (const blk of lds) {
-      const jm = blk.match(/>([\s\S]*?)<\/script>/i); if (!jm) continue;
-      let j; try { j = JSON.parse(jm[1]); } catch (e) { continue; }
-      const arr = Array.isArray(j) ? j : (j["@graph"] || [j]);
-      for (const o of arr) {
-        if (!o) continue;
-        const off = o.offers || (o.makesOffer && o.makesOffer[0]);
-        if (off && off.price && !ldPrice) ldPrice = Number(String(off.price).replace(/\D/g, ""));
-        if (o.floorSize && o.floorSize.value && !ldMq) ldMq = Number(String(o.floorSize.value).replace(/\D/g, ""));
-        if (o.address && !ldAddr) ldAddr = typeof o.address === "string" ? o.address : [o.address.streetAddress, o.address.addressLocality].filter(Boolean).join(", ");
-      }
-    }
-  } catch (e) {}
-
-  const prezzo = ldPrice || (() => { const m = text.match(/([\d.]{4,})\s*€/) || text.match(/€\s*([\d.]{4,})/); return m ? Number(m[1].replace(/\./g, "")) : null; })();
-  const mq = ldMq || (() => { const m = text.match(/(\d{2,4})\s*m(?:²|q\b|2\b)/i); return m ? Number(m[1]) : null; })();
-
-  // zona: breadcrumb "Roma • ZONA •" o dizionario nomi-zona nel testo
-  let zona = (text.match(/Roma\s*[•·›>]\s*([^•·›>]{3,40})\s*[•·›>]/i) || [])[1] || "";
-  if (!zona) { const hay = text.toLowerCase(); for (const z of ZONE_NAMES) { if (hay.includes(z.toLowerCase())) { zona = z; break; } } }
-  let indir = ldAddr || (titolo.match(/in\s+(Via|Viale|Vicolo|Piazza|Largo|Corso|Lungotevere)[^,—|]*/i) || [])[0] || "";
-  indir = indir.replace(/^in\s+/i, "").trim();
-  if (zona && indir.toLowerCase().indexOf(zona.toLowerCase()) < 0) indir = (indir ? indir + ", " : "") + zona;
-
-  // descrizione (per bias: seminterrato/villa/agenzia/affittato) + foto
-  const descMatch = html.match(/<meta[^>]+name="description"[^>]+content="([^"]+)"/i);
-  const descrizione = descMatch ? descMatch[1].slice(0, 600) : text.slice(0, 400);
-  const foto = estraiFoto(html, 5); // [{url, plan}]
-
-  return { titolo: titolo.trim(), prezzo, mq, indirizzo: indir || zona, zona, descrizione, foto };
-}
-
-function omiCompatto() {
-  // testo compatto delle zone per il prompt (nome + range)
-  return Object.entries(omiData.zone)
-    .map(([z, e]) => `${z}=${e.nome}|${e.compr_min}-${e.compr_max}(med ${e.compr_med})|loc ${e.loc_min ?? "?"}-${e.loc_max ?? "?"}`)
-    .join("\n");
-}
-
-async function chiediClaude(dati) {
-  const sys = `Sei un analista immobiliare per Roma. Valuti un annuncio rispetto ai valori OMI ufficiali (Agenzia Entrate, II sem 2025).
-Dati OMI per zona (codice=nome|vendita €/mq min-max(medio)|affitto €/mq/mese):
-${omiCompatto()}
-
-Compito:
-1. Dall'indirizzo, scegli la zona OMI più corretta usando i nomi e la tua conoscenza di Roma. Se incerto fra due, dillo e usa la più prudente.
-2. NON calcolare tu lo sconto: il sistema lo calcola con la matematica esatta. Tu commenta i valori OMI della zona scelta e il €/mq dell'annuncio.
-3. Rendimento: usa loc_med della zona; ETICHETTA "LORDO" + riga "netto stimato ~metà (dopo cedolare 21%, sfitto, spese, tasse)".
-4. SEGNALA SEMPRE i bias: villa/casa/mq>300 (OMI è €/mq appartamenti, terreno distorce); seminterrato (vale meno); agenzia (l'utente cerca privati); affittato/nuda proprietà.
-5. IMMAGINI: le ricevi etichettate (🗺️ PLANIMETRIA o 📷 foto).
-   - FOTO → stato reale (ristrutturato/da rifare), luminosità/esposizione, finiture, red flag (umidità, lavori).
-   - PLANIMETRIA → taglio e distribuzione (vani passanti vs indipendenti, bagni ciechi, cucina abitabile/cucinotto, doppi affacci, ingresso), quanti veri vani, se i mq dichiarati sembrano coerenti col disegno (segnala se sospetti mq "gonfiati" con balconi/terrazzi conteggiati). La planimetria pesa molto sul valore reale.
-   - Se manca la planimetria, dillo: "planimetria non disponibile, taglio da verificare".
-6. Verdetto onesto in 3 righe: affare sì/no, cosa verificare.
-Sii sintetico. Non inventare dati mancanti.
-
-IMPORTANTISSIMO: inizia la risposta con UNA riga in questo formato esatto, poi vai a capo:
-ZONA: <codice zona OMI scelto, es. C51>
-Questa riga è per il sistema (calcolerà lo sconto), NON ripeterla nell'analisi.`;
-
-  // normalizza foto: accetta sia stringhe (vecchio) sia {url,plan} (nuovo)
-  const foto = (dati.foto || []).slice(0, 5).map((f) =>
-    typeof f === "string" ? { url: f, plan: isPlanimetria(f) } : { url: f.url, plan: !!f.plan }
-  ).filter((f) => f.url);
-  const nPlan = foto.filter((f) => f.plan).length;
-  const nFotoReali = foto.length - nPlan;
-
-  const userText = `Annuncio:
-- Titolo/indirizzo: ${dati.indirizzo || dati.titolo || "?"}
-- Prezzo: ${dati.prezzo ? dati.prezzo + " €" : "?"}
-- Superficie: ${dati.mq ? dati.mq + " mq" : "?"}
-- Descrizione: ${dati.descrizione || "—"}
-- Note extra: ${dati.note || "—"}
-${dati.url ? "- Fonte: " + dati.url : ""}
-${foto.length ? `\nAllego ${foto.length} immagini in quest'ordine:` : ""}${foto.map((f, i) => `\n  ${i + 1}. ${f.plan ? "🗺️ PLANIMETRIA (leggi i vani, il taglio, esposizione, doppi affacci, bagni ciechi, mq apparenti)" : "📷 foto immobile"}`).join("")}
-
-Dammi la tua opinione.`;
-
-  // costruisci content: testo + immagini (vision). Planimetrie già in testa.
-  const content = [{ type: "text", text: userText }];
-  for (const f of foto) {
-    content.push({ type: "image", source: { type: "url", url: f.url } });
-  }
-  const useVision = foto.length > 0;
-
-  const resp = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "x-api-key": process.env.ANTHROPIC_API_KEY,
-      "anthropic-version": "2023-06-01",
-    },
-    body: JSON.stringify({
-      model: useVision ? "claude-sonnet-4-6" : MODEL, // Sonnet per leggere foto/planimetrie
-      max_tokens: useVision ? 1400 : MAX_TOKENS,
-      system: sys,
-      messages: [{ role: "user", content }],
-    }),
-  });
-  if (!resp.ok) {
-    const t = await resp.text();
-    throw new Error(`Claude API ${resp.status}: ${t.slice(0, 200)}`);
-  }
-  const j = await resp.json();
-  return j.content?.[0]?.text || "(nessuna risposta)";
 }
 
 export default async function handler(req, res) {
@@ -224,7 +46,7 @@ export default async function handler(req, res) {
     // se l'estensione ha già mandato prezzo+mq+zona, NON serve aprire l'URL
     if (url && (!prezzo || !mq || !indirizzo)) {
       try {
-        const e = await estraiDaUrl(url);
+        const e = await estraiDaUrl(url, ZONE_NAMES);
         dati = { ...e, ...dati, prezzo: prezzo || e.prezzo, mq: mq || e.mq, indirizzo: indirizzo || e.indirizzo };
       } catch (e) {
         // estrazione fallita: serve input a mano
@@ -237,25 +59,11 @@ export default async function handler(req, res) {
     if (!dati.prezzo || !dati.mq)
       return res.status(422).json({ error: "Servono almeno prezzo e mq." });
 
-    let opinione = await chiediClaude(dati);
-    // Claude ritorna solo la ZONA; il BACKEND calcola sconto/rendimento (matematica esatta)
-    let zonaCode = null, sconto = null, esito = null, rendimento = null, eurMq = null, omi = null;
-    const zm = opinione.match(/ZONA:\s*([A-Z]\d{1,3})/i);
-    if (zm) {
-      zonaCode = zm[1].toUpperCase();
-      opinione = opinione.replace(zm[0], "").replace(/^\s+/, "");
-      const z = omiData.zone[zonaCode];
-      if (z && dati.prezzo && dati.mq) {
-        eurMq = Math.round(dati.prezzo / dati.mq);
-        sconto = Math.round(((z.compr_med - eurMq) / z.compr_med) * 100);
-        esito = sconto >= 8 ? "AFFARE" : (sconto >= -3 ? "IN LINEA" : "CARO");
-        omi = { min: z.compr_min, med: z.compr_med, max: z.compr_max }; // per barra visiva
-        if (z.loc_min && z.loc_max) {
-          const locMed = (z.loc_min + z.loc_max) / 2;
-          rendimento = +(((locMed * dati.mq * 12) / dati.prezzo) * 100).toFixed(1);
-        }
-      }
-    }
+    const opinioneGrezza = await chiediClaude(dati);
+    // Claude ritorna solo la ZONA; il BACKEND calcola sconto/rendimento (matematica esatta — vedi _lib/valuation.js)
+    const { opinione, zonaCode, sconto, esito, rendimento, omi, eurMq } =
+      calcolaValutazione(opinioneGrezza, omiData, dati.prezzo, dati.mq);
+
     // conteggio immagini (foto vs planimetrie) per il badge
     const ft = (dati.foto || []).map((f) => (typeof f === "string" ? { plan: isPlanimetria(f) } : f));
     const nPlan = ft.filter((f) => f && f.plan).length;
