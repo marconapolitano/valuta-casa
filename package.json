@@ -3,5 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Valuta annuncio immobiliare Roma vs OMI con Claude"
+  "description": "Valuta annuncio immobiliare Roma vs OMI con Claude",
+  "scripts": {
+    "sync-extension": "node scripts/sync-extension.mjs"
+  }
 }
