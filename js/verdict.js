@@ -16,10 +16,6 @@ export function buildVerdict(op,dati){
   return {tone:tone,big:big,label:label,sub:sub};
 }
 
-// TODO(Marco): calcola la posizione del pallino (0..100 %) del €/mq annuncio nella barra range OMI.
-// Input: eurMq (€/mq annuncio), omi = {min, med, max} (€/mq OMI zona).
-// Deve restituire un numero 0..100 (% da sinistra). Considera il caso fuori range (eurMq<min o >max).
-// Vedi le 3 strategie discusse: clamp / overflow / scala estesa ±20%. Scegli tu.
 export function barPos(eurMq, omi){
   var sp=omi.max-omi.min || 1;
   var base=omi.min-0.2*sp, top=omi.max+0.2*sp; // scala estesa ±20%: fuori-range resta visibile
