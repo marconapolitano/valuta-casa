@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Valuta Casa — Roma vs OMI",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Su un annuncio immobiliare, un click: estrae prezzo/mq/zona/foto e chiede a Claude se è un buon affare vs OMI.",
   "permissions": ["activeTab", "scripting"],
   "host_permissions": [

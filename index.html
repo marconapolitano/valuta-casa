@@ -24,6 +24,10 @@
     <div class="field"><label>m²</label><input id="mq" type="number" inputmode="numeric" placeholder="95"></div>
   </div>
   <div class="field"><label>Zona</label><input id="zona" list="zonelist" placeholder="es. Monteverde Nuovo" autocomplete="off"><datalist id="zonelist"></datalist></div>
+  <div class="row">
+    <div class="field"><label>Acquisto</label><select id="uso"><option value="investimento">Investimento</option><option value="prima_casa">Prima casa</option></select></div>
+    <div class="field"><label>Stato immobile</label><select id="stato"><option value="">Auto (da foto)</option><option value="ottimo">Ristrutturato</option><option value="normale">Abitabile</option><option value="da_ristrutturare">Da ristrutturare</option></select></div>
+  </div>
   <div class="field"><label>Note (facoltativo)</label><input id="note" placeholder="villa? seminterrato? agenzia? affittato?"></div>
   <div class="pwbox field" id="pwbox"><label>Password</label><input id="pw" type="password" placeholder="password" autocomplete="current-password"></div>
   <button class="go" id="go">Valuta</button>

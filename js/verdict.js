@@ -1,4 +1,5 @@
 // badge verdetto dai campi STRUTTURATI del backend (sconto/esito calcolati, non pescati dal testo)
+// v2: lo sconto è vs benchmark AGGIUSTATO per stato/piano (non più OMI med secco)
 export function buildVerdict(op,dati){
   var pct = (dati && typeof dati.sconto==="number") ? dati.sconto : null;
   var esito = (dati && dati.esito) ? dati.esito : null;
@@ -8,6 +9,7 @@ export function buildVerdict(op,dati){
     if(pct>=8){tone="good";label="Sotto mercato";sub="Possibile affare";}
     else if(pct>=-3){tone="mid";label="In linea";sub="In linea col mercato";}
     else{tone="bad";label="Sopra mercato";sub="Probabilmente caro";}
+    if(dati&&dati.fiducia==="bassa")sub+=" (zona incerta, verifica)";
   } else if(esito){
     if(esito==="AFFARE"){tone="good";big="Sì";label="Affare";sub="Sotto mercato";}
     else if(esito==="CARO"){tone="bad";big="No";label="Caro";sub="Sopra mercato";}

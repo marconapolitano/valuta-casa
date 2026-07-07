@@ -1,4 +1,4 @@
-// Genera estensione/_generated/extractor.inject.js da extractor.src.js.
+// Genera estensione/generated/extractor.inject.js da extractor.src.js.
 //
 // Perché serve: chrome.scripting.executeScript({func: estrai}) richiede una
 // funzione autocontenuta — niente import, l'array zone DEVE essere un letterale
@@ -20,7 +20,9 @@ import { deriveZoneNames } from "../api/_lib/zones.js";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 const SRC = join(ROOT, "estensione", "extractor.src.js");
-const OUT_DIR = join(ROOT, "estensione", "_generated");
+// "generated" SENZA underscore: Chrome rifiuta estensioni unpacked con
+// directory "_*" (riservate al sistema, tipo _locales).
+const OUT_DIR = join(ROOT, "estensione", "generated");
 const OUT = join(OUT_DIR, "extractor.inject.js");
 
 const PLACEHOLDER = /\/\*__ZONE_NAMES__\*\/\[\]/;
