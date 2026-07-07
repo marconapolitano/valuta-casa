@@ -60,7 +60,7 @@ function parseHeader(opinioneGrezza) {
     return m[1];
   };
   const zona = take(/^\s*ZONA:\s*([A-Z]\d{1,3})\s*$/im) || take(/ZONA:\s*([A-Z]\d{1,3})/i);
-  const fiducia = (take(/^\s*FIDUCIA:\s*(alta|media|bassa)\s*$/im) || "").toLowerCase() || null;
+  const fiducia = (take(/^\s*FIDUCIA:\s*(certa|alta|media|bassa)\s*$/im) || "").toLowerCase() || null;
   let zonaAlt = take(/^\s*ZONA_ALT:\s*([A-Z]\d{1,3}|-)\s*$/im);
   if (zonaAlt === "-") zonaAlt = null;
   const stato = normStato(take(/^\s*STATO:\s*(ottimo|normale|da[_ ]ristrutturare)\s*$/im));
@@ -92,12 +92,17 @@ function calcolaRendimento(z, { prezzo, mq, stato, uso, agenzia }) {
   };
 }
 
-// dati: { prezzo, mq, car, uso, statoManuale, agenzia }
+// dati: { prezzo, mq, car, uso, statoManuale, agenzia, zonaCerta }
 // Ritorna { opinione, zonaCode, fiducia, zonaAlt, stato, sconto, scontoSuMed,
 //           esito, benchmark, aggiustamenti, omi, eurMq, rendimento } — null nei
 // campi se zona non riconosciuta o mancano dati.
 export function calcolaValutazione(opinioneGrezza, omiData, dati) {
   const h = parseHeader(opinioneGrezza);
+  // zona determinata da GPS + perimetri ufficiali: vince su qualsiasi scelta di
+  // Claude (point-in-polygon = fatto, non giudizio)
+  if (dati.zonaCerta && omiData.zone[dati.zonaCerta]) {
+    h.zona = dati.zonaCerta; h.fiducia = "certa"; h.zonaAlt = null;
+  }
   const out = { opinione: h.opinione, zonaCode: h.zona, fiducia: h.fiducia, zonaAlt: h.zonaAlt,
     stato: null, sconto: null, scontoSuMed: null, esito: null, benchmark: null,
     aggiustamenti: [], omi: null, eurMq: null, rendimento: null };

@@ -1,9 +1,24 @@
 import {showResult} from "./result-view.js";
 import {populateZoneList} from "./zones.js";
+import {initScan} from "./scan-view.js";
 
 var $=function(i){return document.getElementById(i);};
 populateZoneList($("zonelist"));
 var pw=localStorage.getItem("vc_pw"); if(!pw)$("pwbox").style.display="block";
+initScan($,function(){return pw||$("pw").value;});
+
+// "Analizza" dallo scanner: precompila form + dati estesi e lancia la valutazione
+document.addEventListener("valuta-annuncio",function(ev){
+  var a=ev.detail;
+  EXT={url:a.url,price:a.prezzo,mq:a.mq,indirizzo:a.indirizzo||(a.zonaNome||""),
+    lat:a.lat,lng:a.lng,descrizione:a.descrizione,foto:a.foto,
+    car:{stato:a.stato,piano:a.piano,ascensore:a.ascensore,bagni:a.bagni,locali:a.locali,classe:a.classe}};
+  if(a.url)$("url").value=a.url;
+  $("prezzo").value=a.prezzo;$("mq").value=a.mq;
+  $("zona").value=a.indirizzo||(a.zonaNome?a.zonaNome.split("(")[0].trim():"");
+  window.scrollTo({top:0,behavior:"smooth"});
+  $("go").click();
+});
 
 var EXT=null; // dati extra da estensione (foto+planimetrie, caratteristiche, coordinate) non in form
 (function(){var p=new URLSearchParams(location.search).get("d");if(!p)return;try{var d=JSON.parse(decodeURIComponent(escape(atob(p))));EXT=d;if(d.url)$("url").value=d.url;if(d.price)$("prezzo").value=d.price;if(d.mq)$("mq").value=d.mq;if(d.zona)$("zona").value=d.zona;else if(d.indirizzo)$("zona").value=d.indirizzo;if(d.note||d.agenzia)$("note").value=[d.note,d.agenzia?"agenzia":""].filter(Boolean).join("; ");if(pw&&d.price&&d.mq)setTimeout(function(){$("go").click();},300);}catch(e){}})();

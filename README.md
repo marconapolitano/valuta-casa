@@ -2,7 +2,11 @@
 
 Servizio web: incolli un link Idealista/Immobiliare (o dati a mano) → opinione di
 Claude basata sui valori OMI ufficiali (Agenzia Entrate, II sem 2025), con
-benchmark aggiustato per stato/piano e rendimento affitto netto reale.
+zona determinata dai perimetri ufficiali (GPS → point-in-polygon), benchmark
+aggiustato per stato/piano e rendimento affitto netto reale.
+
+In più: **scanner annunci privati** (Subito.it) che confronta in blocco i
+prezzi coi valori OMI senza costi AI, ordinati dal più scontato.
 
 Protetto da password condivisa. La Claude API key sta solo nel backend.
 
@@ -25,6 +29,13 @@ feature significa toccare un file da 30-90 righe, non un blob da 270.
   - `api/_lib/geo.js` — geocoding best-effort Nominatim (OSM): quartiere +
     municipio + via dalle coordinate → zona OMI molto più precisa. Ogni errore
     ritorna null e la valutazione procede senza.
+  - `api/_lib/geozone.js` — **zona OMI da GPS**: point-in-polygon sui perimetri
+    ufficiali (`data/omi_roma_zone_poligoni.json`). Coordinate del portale →
+    zona CERTA (fiducia "certa", nessun giudizio); geocoding indirizzo → zona
+    solo suggerita (il geocode cade sull'asse stradale = spesso il confine).
+  - `api/_lib/subito.js` — ricerca annunci PRIVATI su Subito.it (filtro nativo
+    `advt=0`, dati strutturati da `__NEXT_DATA__`, 1 GET per pagina da 30
+    annunci — nessun blocco da superare, niente tecniche di evasione).
   - `api/_lib/claude.js` — prompt + chiamata Claude API (vision per foto e
     planimetrie). Claude ritorna solo CLASSIFICAZIONI: ZONA/FIDUCIA/ZONA_ALT/STATO.
   - `api/_lib/valuation.js` — math deterministica (benchmark aggiustato per
@@ -32,13 +43,25 @@ feature significa toccare un file da 30-90 righe, non un blob da 270.
     d'acquisto — **non spostare a Claude**, vedi commento di testa nel file).
     Le assunzioni economiche sono tutte nel `CONFIG` in testa: ritocca lì.
   - `api/_lib/omi-prompt.js` — blocco dati OMI per il prompt, precomputato 1 volta
+- `api/scan.js` — endpoint scanner: Subito privati → zona (GPS+poligoni o
+  nome nel testo) → benchmark per stato → sconto. Tutto deterministico,
+  ZERO chiamate AI (gratis). Rate limit separato (20/giorno).
 - `estensione/` — estensione Chrome (estrae da annunci live, vedi sezione sotto)
 - `data/omi_roma_compatto.json` — valori OMI 211 zone Roma (fonte-verità unica:
   backend, frontend ed estensione derivano la lista zone da QUESTO file)
+- `data/omi_roma_zone_poligoni.json` — perimetri ufficiali delle zone OMI
+  (fonte: Agenzia Entrate via [onData](https://github.com/ondata/quotazioni-immobiliari-agenzia-entrate),
+  KMZ provincia Roma 2018/2; semplificati a ~3 m, 208/211 zone — mancano solo
+  E186-188, nate dopo il 2018: per quelle resta il fallback Claude+geocoding).
+  Le zonizzazioni cambiano di rado; se un domani serve rigenerarlo, la
+  provenienza e il formato sono documentati nell'header del file stesso.
 
-## Perché la valutazione è più precisa (v2)
-1. **Zona**: coordinate GPS dal portale (o geocoding dell'indirizzo) → quartiere
-   OSM nel prompt → Claude sceglie la zona OMI con FIDUCIA dichiarata e zona
+## Perché la valutazione è più precisa (v2/v3)
+0. **Zona certa dai perimetri ufficiali**: se l'annuncio ha coordinate GPS
+   (immobiliare.it le espone quasi sempre), il point-in-polygon sui perimetri
+   OMI determina la zona SENZA giudizio — fiducia "certa" nella UI.
+1. **Zona (fallback)**: geocoding dell'indirizzo → zona suggerita dai poligoni +
+   quartiere OSM nel prompt → Claude sceglie con FIDUCIA dichiarata e zona
    alternativa se indeciso.
 2. **Stato**: OMI censisce lo stato NORMALE. Claude classifica lo stato reale
    (foto > dichiarato) e il backend corregge il benchmark (±10/−18%), più
@@ -46,6 +69,19 @@ feature significa toccare un file da 30-90 righe, non un blob da 270.
 3. **Rendimento**: non più lordo secco — netto con sfitto 1 mese, cedolare 21%,
    IMU (zero se prima casa), manutenzione, e costo totale d'ingresso (registro,
    notaio, agenzia, ristrutturazione se da rifare) come denominatore.
+
+## Scanner privati (Subito.it)
+Nel frontend, sotto il form: imposti budget e m² minimi → 1 click → lista di
+annunci **di privati** a Roma ordinata per sconto vs benchmark OMI (corretto
+per lo stato dichiarato). È tutto deterministico e gratis (nessuna chiamata
+Claude): serve a fare screening di massa. Su ogni risultato:
+- **Analizza →** lancia la valutazione completa (Claude + foto, zona certa dal
+  GPS quando l'annuncio ha la mappa);
+- **Subito ↗** apre l'annuncio originale.
+
+Fonte: pagina di ricerca pubblica di Subito con filtro nativo "privati"
+(`advt=0`) — una normale GET, nessun blocco aggirato. Se Subito cambia layout
+o blocca, lo scanner fallisce con errore esplicito (vedi `api/_lib/subito.js`).
 
 ## Estensione Chrome
 Su un annuncio live, un click estrae prezzo/mq/zona/foto/planimetrie +

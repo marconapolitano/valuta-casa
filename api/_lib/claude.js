@@ -11,7 +11,7 @@ Dati OMI per zona — ATTENZIONE: sono per stato conservativo NORMALE (codice=no
 ${OMI_PROMPT_BLOCK}
 
 Compito:
-1. ZONA: scegli la zona OMI corretta. Fonti in ordine di affidabilità: blocco GEO (quartiere OSM + coordinate GPS, quando presente — pesa più di tutto), indirizzo/microzona del portale, tua conoscenza di Roma. FIDUCIA: alta = GEO e nomi concordano; media = solo nomi/indirizzo; bassa = hai dovuto tirare a indovinare. Se indeciso fra due zone, metti la seconda in ZONA_ALT.
+1. ZONA: scegli la zona OMI corretta. Se il messaggio dice "ZONA GIÀ DETERMINATA" (GPS + perimetri ufficiali), usa QUELLA e scrivi FIDUCIA: certa. Altrimenti, fonti in ordine di affidabilità: zona suggerita dai perimetri (se indicata — confermala o correggi se l'indirizzo la contraddice), blocco GEO (quartiere OSM + coordinate), indirizzo/microzona del portale, tua conoscenza di Roma. FIDUCIA: alta = più fonti concordano; media = solo nomi/indirizzo; bassa = hai dovuto tirare a indovinare. Se indeciso fra due zone, metti la seconda in ZONA_ALT.
 2. STATO: classifica lo stato REALE in ottimo (ristrutturato/nuovo) | normale (abitabile/buono) | da_ristrutturare. Fonti in ordine: FOTO (prevalgono sempre), caratteristiche dichiarate, descrizione. Se le foto contraddicono l'annuncio ("ristrutturato" ma foto anni '70), dillo esplicitamente e classifica dalle foto.
 3. NON calcolare tu sconto/rendimento: il sistema li calcola con matematica esatta usando ZONA e STATO che dichiari (benchmark aggiustato per stato, rendimento netto con cedolare/IMU/sfitto). Tu commenta qualità, coerenza del prezzo, e ciò che il calcolo non vede.
 4. SEGNALA SEMPRE i bias: villa/casa/mq>300 (OMI è €/mq appartamenti, terreno distorce); seminterrato; agenzia (l'utente cerca privati); affittato/nuda proprietà; asta; mq commerciali vs calpestabili.
@@ -24,7 +24,7 @@ Sii sintetico. Non inventare dati mancanti.
 
 IMPORTANTISSIMO: inizia la risposta con ESATTAMENTE queste 4 righe (sono per il sistema, NON ripeterle nell'analisi), poi riga vuota e l'analisi:
 ZONA: <codice zona OMI, es. C51>
-FIDUCIA: <alta|media|bassa>
+FIDUCIA: <certa|alta|media|bassa>
 ZONA_ALT: <codice oppure ->
 STATO: <ottimo|normale|da_ristrutturare>`;
 
@@ -42,8 +42,12 @@ function carBlock(car) {
   return rows.length ? `\nCaratteristiche dichiarate:\n${rows.join("\n")}` : "";
 }
 
-function geoBlock(geo, quartiere) {
+function geoBlock(dati) {
+  const { geo, quartiere, zonaCerta, zonaSuggerita } = dati;
+  if (zonaCerta)
+    return `\nZONA GIÀ DETERMINATA: il punto GPS dell'annuncio cade nel perimetro ufficiale della zona OMI ${zonaCerta}. Nell'header scrivi ZONA: ${zonaCerta} e FIDUCIA: certa. Non sceglierne un'altra.`;
   const bits = [];
+  if (zonaSuggerita) bits.push(`zona OMI suggerita dai perimetri ufficiali (geocoding indirizzo, possibile errore di confine): ${zonaSuggerita}`);
   if (geo && geo.quartiere) bits.push(`quartiere OSM: ${geo.quartiere}`);
   if (quartiere && (!geo || geo.quartiere !== quartiere)) bits.push(`microzona portale: ${quartiere}`);
   if (geo && geo.municipio) bits.push(geo.municipio);
@@ -65,7 +69,7 @@ export async function chiediClaude(dati) {
 - Venditore: ${dati.agenzia ? "agenzia" : "non specificato (possibile privato)"}
 - Descrizione: ${dati.descrizione || "—"}
 - Note extra: ${dati.note || "—"}
-${dati.url ? "- Fonte: " + dati.url : ""}${carBlock(dati.car)}${geoBlock(dati.geo, dati.quartiere)}
+${dati.url ? "- Fonte: " + dati.url : ""}${carBlock(dati.car)}${geoBlock(dati)}
 ${foto.length ? `\nAllego ${foto.length} immagini in quest'ordine:` : ""}${foto.map((f, i) => `\n  ${i + 1}. ${f.plan ? "🗺️ PLANIMETRIA (leggi i vani, il taglio, esposizione, doppi affacci, bagni ciechi, mq apparenti)" : "📷 foto immobile"}`).join("")}
 
 Dammi la tua opinione.`;

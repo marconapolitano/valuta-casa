@@ -12,6 +12,7 @@ import omiData from "../data/omi_roma_compatto.json" with { type: "json" };
 import { deriveZoneNames } from "./_lib/zones.js";
 import { estraiDaUrl, isPlanimetria } from "./_lib/extract.js";
 import { geocoda } from "./_lib/geo.js";
+import { zonaDaCoordinate } from "./_lib/geozone.js";
 import { chiediClaude } from "./_lib/claude.js";
 import { calcolaValutazione } from "./_lib/valuation.js";
 
@@ -67,16 +68,25 @@ export default async function handler(req, res) {
     if (!dati.prezzo || !dati.mq)
       return res.status(422).json({ error: "Servono almeno prezzo e mq." });
 
+    // coordinate DEL PORTALE = posizione esatta dell'immobile → zona CERTA dai
+    // perimetri ufficiali OMI (point-in-polygon, niente giudizio).
+    dati.zonaCerta = dati.lat != null ? zonaDaCoordinate(dati.lat, dati.lng) : null;
+
     // geocoding best-effort: quartiere OSM + coordinate → zona OMI più precisa.
     // null su errore/timeout: la valutazione procede comunque.
     dati.geo = await geocoda({ lat: dati.lat, lng: dati.lng, indirizzo: dati.indirizzo });
+
+    // il geocode di un indirizzo cade sull'asse stradale — e i confini OMI
+    // corrono lungo le strade: zona solo SUGGERITA, Claude conferma o corregge.
+    if (!dati.zonaCerta && dati.geo && dati.geo.lat != null)
+      dati.zonaSuggerita = zonaDaCoordinate(dati.geo.lat, dati.geo.lng);
 
     const opinioneGrezza = await chiediClaude(dati);
     // Claude ritorna solo CLASSIFICAZIONI (zona/fiducia/stato); il BACKEND calcola
     // benchmark/sconto/rendimento (matematica esatta — vedi _lib/valuation.js)
     const v = calcolaValutazione(opinioneGrezza, omiData, {
       prezzo: dati.prezzo, mq: dati.mq, car: dati.car,
-      uso, statoManuale: stato, agenzia: dati.agenzia,
+      uso, statoManuale: stato, agenzia: dati.agenzia, zonaCerta: dati.zonaCerta,
     });
 
     // conteggio immagini (foto vs planimetrie) per il badge

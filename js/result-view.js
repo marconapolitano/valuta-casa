@@ -52,10 +52,11 @@ export function showResult($, opinione, err, dati){
   // riga zona + fiducia + benchmark aggiustato
   if(dati&&dati.zona){
     var zbits=["Zona "+dati.zona+(dati.zonaNome?" — "+dati.zonaNome.split("(")[0].trim():"")];
-    if(dati.fiducia)zbits.push("fiducia "+dati.fiducia);
+    if(dati.fiducia)zbits.push(dati.fiducia==="certa"?"verificata GPS + perimetri ufficiali ✓":"fiducia "+dati.fiducia);
     if(dati.zonaAlt)zbits.push("alternativa: "+dati.zonaAlt+(dati.zonaAltNome?" "+dati.zonaAltNome.split("(")[0].trim():""));
     var zl=el("div","zline",zbits.join(" · "));
     if(dati.fiducia==="bassa")zl.classList.add("warn");
+    if(dati.fiducia==="certa")zl.classList.add("ok");
     v.appendChild(zl);
     if(dati.benchmark&&dati.aggiustamenti&&dati.aggiustamenti.length){
       var agg=dati.aggiustamenti.map(function(a){return a.label+" "+(a.pct>0?"+":"")+a.pct+"%";}).join(", ");
