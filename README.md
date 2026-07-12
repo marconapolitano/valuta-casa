@@ -14,6 +14,16 @@ Protetto da password condivisa. La Claude API key sta solo nel backend.
 Frontend e backend sono divisi in moduli piccoli e mirati — modificare una
 feature significa toccare un file da 30-90 righe, non un blob da 270.
 
+Tre pagine (funzioni separate, stessa password in localStorage):
+- `/` **valuta** un annuncio (analisi completa con Claude)
+- `/scan.html` **scanner privati** (screening di massa senza AI)
+- `/strumenti.html` **bookmarklet + estensione** (estrazione nel TUO browser)
+
+Regola UX fissa: la precompilazione automatica (estensione, bookmarklet,
+scanner) NON invia mai da sola — evidenzia i campi, mostra un banner
+"controlla e premi Valuta" e aspetta conferma. Il backend inoltre AVVISA
+se i dati puzzano (€/m² impossibile per Roma, m² anomali).
+
 - `index.html` — markup puro (form + risultato), carica CSS/JS come asset statici
   - `css/style.css` — stili (glass-card, mesh-background, gauge-bar, chips, rendimento)
   - `js/app.js` — entry point: wiring, password, parsing `?d=`, fetch `/api/valuta`
@@ -83,10 +93,30 @@ Fonte: pagina di ricerca pubblica di Subito con filtro nativo "privati"
 (`advt=0`) — una normale GET, nessun blocco aggirato. Se Subito cambia layout
 o blocca, lo scanner fallisce con errore esplicito (vedi `api/_lib/subito.js`).
 
+**Perché solo Subito**: è l'unico portale che non blocca le GET da server
+(gli altri → 403, verificato). Aggiungere Idealista/Immobiliare allo scanner
+richiederebbe tecniche di evasione anti-bot: fuori discussione. Per quei
+portali il flusso è bookmarklet/estensione sull'annuncio singolo.
+
+## Test
+`npm test` — unit deterministici (valutazione, estrazione, poligoni, scanner).
+
+## Perché estensione/bookmarklet e non solo web app
+Idealista, Immobiliare, Casa.it, Wikicasa e Bakeca rispondono **403** a
+qualsiasi lettura da server (verificato): l'unico modo lecito di leggere quegli
+annunci è dal browser dell'utente, sull'annuncio che ha già aperto. La web app
+resta usabile ovunque (anche da cellulare: incolli il link o i dati a mano);
+estensione e bookmarklet sono solo acceleratori di estrazione:
+- **bookmarklet** (`/strumenti.html`, generato da `npm run sync-extension` in
+  `bookmarklet.txt`): qualsiasi browser desktop senza installare nulla (pc di
+  lavoro) e Safari iPhone. Stesso estrattore, senza array zone (il backend
+  risolve la zona con GPS+poligoni).
+- **estensione Chrome**: un click sull'icona, solo desktop.
+
 ## Estensione Chrome
 Su un annuncio live, un click estrae prezzo/mq/zona/foto/planimetrie +
-caratteristiche strutturate + coordinate GPS (browser reale → IP residenziale,
-supera i blocchi anti-scraping) e apre il servizio precompilato.
+caratteristiche strutturate + coordinate GPS e apre il servizio precompilato
+(che aspetta la tua conferma prima di valutare).
 
 - `estensione/extractor.src.js` — **file da editare** per modifiche all'estrazione
   (leggibile, syntax-highlight, lint). Contiene un placeholder `ZONE_NAMES` —

@@ -9,9 +9,11 @@
 <div class="wrap">
 
 <div class="head"><div class="logo">🏠</div><div><h1>Valuta Casa</h1></div></div>
+<nav class="nav"><a class="on" href="/">Valuta</a><a href="/scan.html">Scanner privati</a><a href="/strumenti.html">Strumenti</a></nav>
 <p class="sub">Buon affare o no? Confronto coi valori OMI ufficiali di Roma (2025).</p>
 
 <div id="form">
+<div class="banner" id="prefillbanner">✓ Campi precompilati automaticamente — <b>controllali</b> (soprattutto prezzo e m²), correggi se serve e premi <b>Valuta</b>.</div>
 <div class="card">
   <div class="field">
     <label>Link annuncio</label>
@@ -31,18 +33,6 @@
   <div class="field"><label>Note (facoltativo)</label><input id="note" placeholder="villa? seminterrato? agenzia? affittato?"></div>
   <div class="pwbox field" id="pwbox"><label>Password</label><input id="pw" type="password" placeholder="password" autocomplete="current-password"></div>
   <button class="go" id="go">Valuta</button>
-</div>
-
-<div class="card">
-  <div class="scan-head">🔎 Scanner privati — Subito.it</div>
-  <div class="hint" style="margin:0 0 12px">Annunci di privati a Roma confrontati coi valori OMI (zona da GPS + perimetri ufficiali, senza AI: gratis). Poi "Analizza" per l'opinione completa con foto.</div>
-  <div class="row">
-    <div class="field"><label>Min €</label><input id="smin" type="number" inputmode="numeric" value="300000"></div>
-    <div class="field"><label>Max €</label><input id="smax" type="number" inputmode="numeric" value="500000"></div>
-    <div class="field"><label>m² min</label><input id="smq" type="number" inputmode="numeric" value="50"></div>
-  </div>
-  <button class="go scan-go" id="scan">Scansiona</button>
-  <div id="scanout"></div>
 </div>
 </div>
 

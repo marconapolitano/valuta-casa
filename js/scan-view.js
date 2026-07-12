@@ -1,6 +1,7 @@
 // Scanner privati (Subito.it): chiama /api/scan e rende la lista risultati.
-// Ogni riga ha "Analizza" → CustomEvent "valuta-annuncio" che app.js intercetta
-// per lanciare la valutazione completa (Claude + foto) precompilata.
+// Ogni riga ha "Analizza" → apre la pagina valuta con ?d=<payload> (stesso
+// formato dell'estensione): campi precompilati, MA la valutazione parte solo
+// quando l'utente preme Valuta (niente auto-invio).
 
 function el(tag, cls, txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e;}
 
@@ -24,7 +25,13 @@ function riga(a){
   col.appendChild(el("div","scan-zona"+(a.fonteZona==="gps"?" ok":""),zbits.join(" · ")));
   var act=el("div","scan-act");
   var go=el("button","scan-btn","Analizza →");
-  go.addEventListener("click",function(){document.dispatchEvent(new CustomEvent("valuta-annuncio",{detail:a}));});
+  go.addEventListener("click",function(){
+    var d={url:a.url,price:a.prezzo,mq:a.mq,
+      indirizzo:a.indirizzo||(a.zonaNome?a.zonaNome.split("(")[0].trim():""),
+      lat:a.lat,lng:a.lng,descrizione:a.descrizione,foto:a.foto,
+      car:{stato:a.stato,piano:a.piano,ascensore:a.ascensore,bagni:a.bagni,locali:a.locali,classe:a.classe}};
+    location.href="/?d="+encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(d)))));
+  });
   act.appendChild(go);
   if(a.url){var link=el("a","scan-link","Subito ↗");link.href=a.url;link.target="_blank";link.rel="noopener";act.appendChild(link);}
   col.appendChild(act);

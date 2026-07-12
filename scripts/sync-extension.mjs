@@ -51,3 +51,23 @@ writeFileSync(OUT, header + generated);
 
 console.log(`OK: ${OUT}`);
 console.log(`${zoneNames.length} zone splicizzate nel placeholder ZONE_NAMES.`);
+
+// ── bookmarklet ─────────────────────────────────────────────────────────────
+// Stesso estrattore, impacchettato come javascript: URI — funziona su QUALSIASI
+// browser desktop senza installare nulla (pc lavoro) e su Safari iPhone.
+// Differenze vs estensione: ZONE_NAMES vuoto (il backend ora risolve la zona
+// con GPS+poligoni/geocoding, e l'array peserebbe 6KB nel segnalibro) e
+// nessun auto-invio (la pagina valuta precompila e aspetta conferma).
+const SERVICE = "https://valuta-casa.vercel.app/";
+const slim = src
+  .replace(PLACEHOLDER, "[]")
+  .split("\n")
+  .filter((l) => !/^\s*\/\//.test(l) && l.trim() !== "")
+  .join("\n");
+const bookmarklet =
+  "javascript:void function(){" + slim +
+  `;var d=estrai();d.src="bookmarklet";` +
+  `location.href="${SERVICE}?d="+encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(d)))))}();`;
+const BM_OUT = join(ROOT, "bookmarklet.txt");
+writeFileSync(BM_OUT, bookmarklet);
+console.log(`OK: ${BM_OUT} (${(bookmarklet.length / 1024).toFixed(1)} KB)`);

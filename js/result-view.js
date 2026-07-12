@@ -124,6 +124,14 @@ export function showResult($, opinione, err, dati){
     v.appendChild(box);
   }
 
+  // avvisi sanity dal backend (dati sospetti: estrazione probabilmente errata)
+  if(dati&&dati.avvisi&&dati.avvisi.length){
+    var av=el("div","avvisi");
+    av.appendChild(el("div","","⚠️ Controlla i dati:"));
+    dati.avvisi.forEach(function(a){av.appendChild(el("div","",a));});
+    v.appendChild(av);
+  }
+
   md.innerHTML=md2html(opinione);
   window.scrollTo({top:0,behavior:"smooth"});
 }

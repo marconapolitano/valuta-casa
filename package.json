@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Valuta annuncio immobiliare Roma vs OMI con Claude",
   "scripts": {
-    "sync-extension": "node scripts/sync-extension.mjs"
+    "sync-extension": "node scripts/sync-extension.mjs",
+    "test": "node test/unit.mjs"
   }
 }

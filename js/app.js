@@ -1,27 +1,35 @@
 import {showResult} from "./result-view.js";
 import {populateZoneList} from "./zones.js";
-import {initScan} from "./scan-view.js";
 
 var $=function(i){return document.getElementById(i);};
 populateZoneList($("zonelist"));
 var pw=localStorage.getItem("vc_pw"); if(!pw)$("pwbox").style.display="block";
-initScan($,function(){return pw||$("pw").value;});
 
-// "Analizza" dallo scanner: precompila form + dati estesi e lancia la valutazione
-document.addEventListener("valuta-annuncio",function(ev){
-  var a=ev.detail;
-  EXT={url:a.url,price:a.prezzo,mq:a.mq,indirizzo:a.indirizzo||(a.zonaNome||""),
-    lat:a.lat,lng:a.lng,descrizione:a.descrizione,foto:a.foto,
-    car:{stato:a.stato,piano:a.piano,ascensore:a.ascensore,bagni:a.bagni,locali:a.locali,classe:a.classe}};
-  if(a.url)$("url").value=a.url;
-  $("prezzo").value=a.prezzo;$("mq").value=a.mq;
-  $("zona").value=a.indirizzo||(a.zonaNome?a.zonaNome.split("(")[0].trim():"");
-  window.scrollTo({top:0,behavior:"smooth"});
-  $("go").click();
+// dati extra (foto, caratteristiche, coordinate) arrivati via ?d= da estensione,
+// bookmarklet o scanner. MAI auto-invio: precompila, evidenzia, aspetta Valuta —
+// l'estrazione automatica può sbagliare, l'utente controlla e conferma.
+var EXT=null;
+function prefill(d){
+  EXT=d;
+  if(d.url)$("url").value=d.url;
+  if(d.price)$("prezzo").value=d.price;
+  if(d.mq)$("mq").value=d.mq;
+  if(d.zona)$("zona").value=d.zona;else if(d.indirizzo)$("zona").value=d.indirizzo;
+  if(d.note||d.agenzia)$("note").value=[d.note,d.agenzia?"agenzia":""].filter(Boolean).join("; ");
+  $("prefillbanner").style.display="block";
+  ["prezzo","mq","zona"].forEach(function(i){if($(i).value)$(i).classList.add("prefilled");});
+  ($("prezzo").value?$("mq"):$("prezzo")).focus();
+}
+(function(){var p=new URLSearchParams(location.search).get("d");if(!p)return;try{prefill(JSON.parse(decodeURIComponent(escape(atob(p)))));}catch(e){}})();
+
+// se l'utente cambia l'URL a mano, i dati estesi (foto/GPS del VECCHIO annuncio)
+// non valgono più: buttali, si riparte dall'estrazione server-side
+$("url").addEventListener("input",function(){
+  if(EXT&&$("url").value.trim()!==(EXT.url||"")){
+    EXT=null;$("prefillbanner").style.display="none";
+    ["prezzo","mq","zona"].forEach(function(i){$(i).classList.remove("prefilled");});
+  }
 });
-
-var EXT=null; // dati extra da estensione (foto+planimetrie, caratteristiche, coordinate) non in form
-(function(){var p=new URLSearchParams(location.search).get("d");if(!p)return;try{var d=JSON.parse(decodeURIComponent(escape(atob(p))));EXT=d;if(d.url)$("url").value=d.url;if(d.price)$("prezzo").value=d.price;if(d.mq)$("mq").value=d.mq;if(d.zona)$("zona").value=d.zona;else if(d.indirizzo)$("zona").value=d.indirizzo;if(d.note||d.agenzia)$("note").value=[d.note,d.agenzia?"agenzia":""].filter(Boolean).join("; ");if(pw&&d.price&&d.mq)setTimeout(function(){$("go").click();},300);}catch(e){}})();
 
 $("again").addEventListener("click",function(){$("result").className="";$("form").style.display="block";window.scrollTo({top:0,behavior:"smooth"});});
 

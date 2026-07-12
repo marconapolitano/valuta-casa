@@ -68,6 +68,14 @@ export default async function handler(req, res) {
     if (!dati.prezzo || !dati.mq)
       return res.status(422).json({ error: "Servono almeno prezzo e mq." });
 
+    // sanity check sui dati estratti: non blocca, AVVISA (l'estrazione
+    // automatica può prendere il numero sbagliato — meglio dirlo che tacere)
+    const avvisi = [];
+    const eurMqGrezzo = Math.round(dati.prezzo / dati.mq);
+    if (dati.prezzo < 30000) avvisi.push(`Prezzo molto basso (${dati.prezzo.toLocaleString("it-IT")} €): estratto male? Verifica sull'annuncio.`);
+    if (dati.mq < 20 || dati.mq > 600) avvisi.push(`Superficie anomala (${dati.mq} m²): verifica sull'annuncio.`);
+    if (eurMqGrezzo < 500 || eurMqGrezzo > 15000) avvisi.push(`${eurMqGrezzo.toLocaleString("it-IT")} €/m² è fuori da ogni zona di Roma: prezzo o m² quasi certamente sbagliati.`);
+
     // coordinate DEL PORTALE = posizione esatta dell'immobile → zona CERTA dai
     // perimetri ufficiali OMI (point-in-polygon, niente giudizio).
     dati.zonaCerta = dati.lat != null ? zonaDaCoordinate(dati.lat, dati.lng) : null;
@@ -100,7 +108,7 @@ export default async function handler(req, res) {
       quartiere: (dati.geo && dati.geo.quartiere) || dati.quartiere || null,
       stato: v.stato, benchmark: v.benchmark, aggiustamenti: v.aggiustamenti,
       sconto: v.sconto, scontoSuMed: v.scontoSuMed, esito: v.esito,
-      rendimento: v.rendimento, car: dati.car };
+      rendimento: v.rendimento, car: dati.car, avvisi };
     return res.status(200).json({ opinione: v.opinione, dati: datiOut });
   } catch (e) {
     return res.status(500).json({ error: String(e.message || e) });

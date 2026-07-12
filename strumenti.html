@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="it"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#07080d">
+<title>Strumenti — Valuta Casa</title>
+<link rel="stylesheet" href="/css/style.css">
+</head><body>
+<div class="mesh"><i></i><i></i><i></i></div>
+<div class="wrap">
+
+<div class="head"><div class="logo">🧰</div><div><h1>Strumenti</h1></div></div>
+<nav class="nav"><a href="/">Valuta</a><a href="/scan.html">Scanner privati</a><a class="on" href="/strumenti.html">Strumenti</a></nav>
+<p class="sub">Idealista e Immobiliare bloccano la lettura da server: l'estrazione affidabile avviene nel <b>tuo</b> browser, sull'annuncio aperto. Due modi:</p>
+
+<div class="card">
+  <div class="scan-head">📎 Bookmarklet — ovunque, zero installazioni</div>
+  <div class="hint" style="margin:6px 0 12px">Un segnalibro che, premuto su un annuncio aperto, estrae i dati (prezzo, m², GPS, foto, caratteristiche) e apre Valuta Casa precompilato — <b>senza inviare nulla finché non confermi</b>. Funziona su PC di lavoro (niente da installare) e su iPhone.</div>
+  <p style="margin:0 0 10px"><a id="bml" class="go" style="display:inline-block;text-decoration:none;padding:12px 18px;width:auto" href="#">🏠 Valuta questa casa</a></p>
+  <div class="hint"><b>Desktop:</b> trascina il bottone qui sopra nella barra dei preferiti. Poi, su un annuncio: clic sul segnalibro.</div>
+  <div class="hint"><b>iPhone/iPad (Safari):</b> premi «Copia codice» → salva questa pagina nei preferiti → Modifica preferito → incolla il codice al posto dell'URL. Poi, su un annuncio: apri i preferiti e tocca il segnalibro.</div>
+  <p><button class="again" id="copybm" style="width:auto;padding:10px 16px">Copia codice</button> <span id="copyok" style="display:none;color:var(--good);font-size:13px;font-weight:700">copiato ✓</span></p>
+</div>
+
+<div class="card">
+  <div class="scan-head">🧩 Estensione Chrome — un click, solo desktop</div>
+  <div class="hint" style="margin:6px 0">Stessa estrazione, attivata dall'icona nella barra. Serve poter caricare estensioni (Chrome → gestisci estensioni → modalità sviluppatore → «Carica non pacchettizzata» → cartella <code>estensione/</code> del repo). Ideale sul PC personale; sul PC di lavoro usa il bookmarklet.</div>
+</div>
+
+<div class="card">
+  <div class="scan-head">📱 Da cellulare, senza bookmarklet</div>
+  <div class="hint" style="margin:6px 0">Condividi/copia il link dell'annuncio e incollalo nel campo «Link annuncio» della pagina <a href="/" style="color:var(--accent)">Valuta</a>: il server prova a leggerlo da solo (Subito sempre; Idealista/Immobiliare spesso bloccano — in quel caso inserisci prezzo e m² a mano, la zona la trova comunque dall'indirizzo).</div>
+</div>
+
+<div class="foot">Il bookmarklet legge la pagina che TU hai aperto nel TUO browser: nessun blocco aggirato.</div>
+</div>
+
+<script>
+fetch("/bookmarklet.txt").then(function(r){return r.text();}).then(function(code){
+  document.getElementById("bml").setAttribute("href",code);
+  document.getElementById("copybm").addEventListener("click",function(){
+    navigator.clipboard.writeText(code).then(function(){document.getElementById("copyok").style.display="inline";});
+  });
+});
+// il click diretto sul bottone non deve navigare (serve solo da trascinare)
+document.getElementById("bml").addEventListener("click",function(e){e.preventDefault();alert("Trascinami nella barra dei preferiti (desktop) oppure usa 'Copia codice' (iPhone).");});
+</script>
+</body></html>
