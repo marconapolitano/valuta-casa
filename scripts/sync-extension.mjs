@@ -52,22 +52,31 @@ writeFileSync(OUT, header + generated);
 console.log(`OK: ${OUT}`);
 console.log(`${zoneNames.length} zone splicizzate nel placeholder ZONE_NAMES.`);
 
-// ── bookmarklet ─────────────────────────────────────────────────────────────
-// Stesso estrattore, impacchettato come javascript: URI — funziona su QUALSIASI
-// browser desktop senza installare nulla (pc lavoro) e su Safari iPhone.
-// Differenze vs estensione: ZONE_NAMES vuoto (il backend ora risolve la zona
-// con GPS+poligoni/geocoding, e l'array peserebbe 6KB nel segnalibro) e
-// nessun auto-invio (la pagina valuta precompila e aspetta conferma).
+// ── bookmarklet + comando rapido iOS ────────────────────────────────────────
+// Stesso estrattore in due impacchettamenti:
+// - BOOKMARKLET: javascript: URI per la barra preferiti (qualsiasi desktop)
+// - SHORTCUT_JS: corpo per l'azione "Esegui JavaScript su pagina web" dei
+//   Comandi Rapidi iOS (foglio di condivisione — su iPhone è il metodo
+//   affidabile; incollare 10KB nel campo URL di un segnalibro Safari no).
+// ZONE_NAMES vuoto (il backend risolve la zona con GPS+poligoni/geocoding,
+// l'array peserebbe 6KB). Nessun auto-invio: la pagina valuta aspetta conferma.
+//
+// NON scritti in file statici pubblici: finiscono in api/_lib/bookmarklet.gen.js
+// e li serve /api/strumenti SOLO con la password giusta (pagina Strumenti gated).
 const SERVICE = "https://valuta-casa.vercel.app/";
 const slim = src
   .replace(PLACEHOLDER, "[]")
   .split("\n")
   .filter((l) => !/^\s*\/\//.test(l) && l.trim() !== "")
   .join("\n");
-const bookmarklet =
-  "javascript:void function(){" + slim +
-  `;var d=estrai();d.src="bookmarklet";` +
-  `location.href="${SERVICE}?d="+encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(d)))))}();`;
-const BM_OUT = join(ROOT, "bookmarklet.txt");
-writeFileSync(BM_OUT, bookmarklet);
-console.log(`OK: ${BM_OUT} (${(bookmarklet.length / 1024).toFixed(1)} KB)`);
+const redirect = `var d=estrai();d.src="bookmarklet";location.href="${SERVICE}?d="+encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(d)))))`;
+const bookmarklet = "javascript:void function(){" + slim + ";" + redirect + "}();";
+const shortcutJs = slim + ";\n" + redirect + ";\ncompletion();";
+const GEN_OUT = join(ROOT, "api", "_lib", "bookmarklet.gen.js");
+writeFileSync(GEN_OUT,
+  `// FILE GENERATO da scripts/sync-extension.mjs — non editare a mano.
+// Servito SOLO da /api/strumenti dietro password (niente asset statici pubblici).
+export const BOOKMARKLET = ${JSON.stringify(bookmarklet)};
+export const SHORTCUT_JS = ${JSON.stringify(shortcutJs)};
+`);
+console.log(`OK: ${GEN_OUT} (bookmarklet ${(bookmarklet.length / 1024).toFixed(1)} KB)`);
